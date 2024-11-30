@@ -33,6 +33,7 @@ public class ItemManager : MonoBehaviour
         itemDictionaries[typeof(FishType)] = new Dictionary<FishType, GameObject>();
         itemDictionaries[typeof(ToolType)] = new Dictionary<ToolType, GameObject>();
         itemDictionaries[typeof(PropType)] = new Dictionary<PropType, GameObject>();
+        itemDictionaries[typeof(BaitType)] = new Dictionary<BaitType, GameObject>();
 
         //×Öµä³õÊ¼»¯
         itemNameDic = new Dictionary<string, GameObject>();

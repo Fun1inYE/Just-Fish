@@ -10,15 +10,39 @@ using UnityEngine.UIElements;
 public class ItemData
 {
     /// <summary>
+    /// (默认的type为null)
+    /// </summary>
+    public BaseType type;
+
+    /// <summary>
+    /// 物品的数量
+    /// </summary>
+    public int amount;
+
+    /// <summary>
+    /// 物品最大堆叠数
+    /// </summary>
+    public int maxAmount;
+
+    /// <summary>
     /// 引用物品种类标识符
     /// </summary>
     public ItemIdentifier itemIdentifier;
 
     /// <summary>
+    /// 判断物体是否可以堆叠（默认false）
+    /// </summary>
+    public bool canStack;
+
+    /// <summary>
     /// 构造函数
     /// </summary>
-    public ItemData()
+    public ItemData(BaseType type, bool canStack = false, int maxAmount = 1, int amount = 1)
     {
+        this.type = type;
+        this.canStack = canStack;
+        this.amount = amount;
+        this.maxAmount = maxAmount;
         itemIdentifier = new ItemIdentifier();
     }
 }
@@ -29,10 +53,6 @@ public class ItemData
 public class FishItem : ItemData
 {
     /// <summary>
-    /// 鱼的信息
-    /// </summary>
-    public FishType Type;
-    /// <summary>
     /// 鱼的长度
     /// </summary>
     public double Length;
@@ -42,24 +62,28 @@ public class FishItem : ItemData
     public double Weight;
 
     /// <summary>
+    /// 被钓起来的时间
+    /// </summary>
+    public string fishedTime;
+
+    /// <summary>
     /// FishItem的构造函数
     /// </summary>
     /// <param name="Type">FishType</param>
     /// <param name="Length">鱼的长度</param>
     /// <param name="Weight">鱼的重量</param>
-    public FishItem(FishType Type, double Length, double Weight)
+    public FishItem(FishType type, double Length, double Weight) : base(type, false)
     {
-        //初始化标识符的变量
-        itemIdentifier = new ItemIdentifier();
-        
-
-        this.Type = Type;
         this.Length = Length;
         this.Weight = Weight;
+        // 获取当前系统时间
+        DateTime currentTime = DateTime.Now;
+        // 将系统时间格式化为字符串
+        fishedTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss");
 
         //给物品标识符赋值
         itemIdentifier.Type = "FishItem";
-        itemIdentifier.Name = Type.FishName;
+        itemIdentifier.Name = type.name;
 
         //鱼的长度和重量标识符赋值
         itemIdentifier.FishLength = Length;
@@ -78,11 +102,6 @@ public enum ToolQuality { Normal, Advanced, Epic, Legendary, Default }
 public class ToolItem : ItemData
 {
     /// <summary>
-    /// 引用ToolType类
-    /// </summary>
-    public ToolType Type;
-
-    /// <summary>
     /// 工具等级
     /// </summary>
     public ToolQuality toolQuality;
@@ -91,16 +110,12 @@ public class ToolItem : ItemData
     /// 构造函数
     /// </summary>
     /// <param name="type"></param>
-    public ToolItem(ToolType Type, ToolQuality toolQuality)
+    public ToolItem(ToolType type, ToolQuality toolQuality) : base(type, false)
     {
-        //初始化标识符的变量
-        itemIdentifier = new ItemIdentifier();
-
-        this.Type = Type;
         this.toolQuality = toolQuality;
 
         itemIdentifier.Type = "ToolItem";
-        itemIdentifier.Name = Type.ToolName;
+        itemIdentifier.Name = type.name;
         itemIdentifier.ToolQualityIditenfier = toolQuality;
     }
 }
@@ -118,11 +133,6 @@ public enum PropQuality { Normal, Advanced, Epic, Legendary, Default}
 public class PropItem : ItemData
 {
     /// <summary>
-    /// 引用PropType类
-    /// </summary>
-    public PropType Type;
-
-    /// <summary>
     /// 道具等级的枚举类
     /// </summary>
     public PropQuality propQuality;
@@ -131,16 +141,30 @@ public class PropItem : ItemData
     /// 构造函数
     /// </summary>
     /// <param name="Type"></param>
-    public PropItem(PropType Type, PropQuality propQuality)
+    public PropItem(PropType type, PropQuality propQuality) : base(type, false)
     {
-        //初始化标识符的变量
-        itemIdentifier = new ItemIdentifier();
-
-        this.Type = Type;
         this.propQuality = propQuality;
 
         itemIdentifier.Type = "PropItem";
-        itemIdentifier.Name = Type.PropName;
+        itemIdentifier.Name = type.name;
         itemIdentifier.PropQualityIditenfier = propQuality;
+    }
+}
+
+/// <summary>
+/// 背包中存的诱饵
+/// </summary>
+public class BaitItem : ItemData
+{
+    /// <summary>
+    /// 构造函数(诱饵可以堆叠,最大为99)
+    /// </summary>
+    /// <param name="canStack"></param>
+    public BaitItem(BaitType type, int maxAmount, int amount) : base(type, true, maxAmount, amount)
+    {
+        itemIdentifier.Type = "BaitItem";
+        itemIdentifier.Name = type.name;
+        itemIdentifier.amountIditenfier = amount;
+        itemIdentifier.maxAmountIditenfier = maxAmount;
     }
 }

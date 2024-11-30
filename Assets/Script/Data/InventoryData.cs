@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,16 +19,44 @@ public class InventoryData
     public bool canExchangeItemWithEquipmentSlotContainer = true;
 
     /// <summary>
-    /// 向列表中添加物品
+    /// 向列表中添加物品(物品数量默认为1)
     /// </summary>
-    public void AddItemInList(ItemData item)
+    public void AddItemInList(ItemData item, int amount = 0)
     {
         //itemData.TypedefaultType为的Slot是否被找到的标识（默认为false）
         bool hasFoundDefaultTypeSlot = false;
 
+        //先判断item是否可以堆叠
+        if (item.canStack)
+        {
+            //遍历背包中的物品
+            foreach(ItemData data in list)
+            {
+                //如果在list中找到了与传进来的item的名字一样的物品
+                if (item.type.name == data.type.name)
+                {
+                    Debug.Log("找到了堆叠的物品");
+                    //在判断此物品的堆叠数是否等于此物品的最大堆叠数
+                    if(data.amount == data.maxAmount)
+                    {
+                        Debug.Log("格子已经为此物品的最大堆叠数了");
+                        continue;
+                    }
+                    //给此物品格子添加amount个重复物品
+                    data.amount += amount;
+                    //更新Identifier
+                    data.itemIdentifier.amountIditenfier = data.amount;
+                    hasFoundDefaultTypeSlot = true;
+                    break;
+                }
+            }
+        }
+
+        //寻找空格子
         for(int i = 0; i < list.Count; i++)
         {
-            if (list[i].itemIdentifier.Type == "defaultType")
+            //如果当前格子为空格子
+            if (list[i].itemIdentifier.Type == "defaultType" && !hasFoundDefaultTypeSlot)
             {
                 list[i] = item;
                 hasFoundDefaultTypeSlot = true;
@@ -38,6 +67,7 @@ public class InventoryData
         if (hasFoundDefaultTypeSlot == false)
         {
             Debug.Log("***背包满了！");
+            //显示UI
         }
     }
 
@@ -58,7 +88,7 @@ public class InventoryData
     }
 
     /// <summary>
-    /// 删除列表中对应序号的物品
+    /// 删除列表中对应序号的物品（删除一个格子中的全部数据）
     /// </summary>
     /// <param name="index">对应的物品序号</param>
     public void DeleteItemInListFromIndex(int index)
@@ -71,22 +101,34 @@ public class InventoryData
         else
         {
             //将从fishItemList对应序号的位置置空
-            list[index] = new ItemData();
+            list[index] = new ItemData(new BaseType());
         }
     }
 
     /// <summary>
-    /// 顺位删除列表中最后一位的数据
+    /// 顺位删除列表中最后一位的数据（删除一个格子中的全部数据）
     /// </summary>
-    public void DeleteLastItemInList()
+    /// <param name="deleteAll">是否删除一个格子中的全部数据（默认为false）</param>
+    public void DeleteLastItemInList(bool deleteAll = false)
     {
         //直接从列表的末尾开始遍历
         for (int i = list.Count - 1; i >= 0; i--)
         {
+            //如果该物品标识符不为defaultType
             if (list[i].itemIdentifier.Type != "defaultType")
             {
-                list[i] = new ItemData();
-                break;
+                if(deleteAll || list[i].amount == 0)
+                {
+                    list[i] = new ItemData(new BaseType());
+                    break;
+                }
+                else
+                {
+                    list[i].amount -= 1;
+                    //更新Identifier
+                    list[i].itemIdentifier.amountIditenfier = list[i].amount;
+                    break;
+                }
             }
         }
     }
@@ -98,7 +140,7 @@ public class InventoryData
     {
         for (int i = 0; i < list.Count; i++)
         {
-            list[i] = new ItemData();
+            list[i] = new ItemData(new BaseType());
         }
     }
 

@@ -74,6 +74,17 @@ public class ArchivePanel : BasePanel
         //绑定按钮功能
         cancelButton.onClick.AddListener(() =>
         {
+            //如果玩家选中了存档还退出的话
+            if(currentArchiveInfoPanel != null)
+            {
+                //将当前选中的Panel调回原来的颜色（关闭SelectPanel）
+                currentArchiveInfoPanel.transform.GetChild(7).gameObject.SetActive(false);
+                //取消选中的存档块
+                currentArchiveInfoPanel = null;
+                //取消选中的存档名字
+                currentArchiveName = null;
+            }
+            
             //弹出窗口
             panelManager.Pop();
         });

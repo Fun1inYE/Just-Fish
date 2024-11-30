@@ -15,13 +15,17 @@ public enum SlotType { FishItem, ToolItem, PropItem, Equipment, Sale, Buy }
 public class Slot : MonoBehaviour
 {
     /// <summary>
-    /// 每个格子的Icon的GameObject
+    /// 每个格子的GameObject
     /// </summary>
-    public GameObject iconObj;
+    public GameObject slotObj;
     /// <summary>
     /// 每个Icon的Image组件
     /// </summary>
     public Image icon;
+    /// <summary>
+    /// 每个格子存取的数目的Text组件
+    /// </summary>
+    public Text itemCountText;
     /// <summary>
     /// 每一个格子的序号，在外部赋值
     /// </summary>
@@ -45,35 +49,30 @@ public class Slot : MonoBehaviour
     public DragItem dragItemScript;
 
     /// <summary>
-    /// 脚本启动检测
+    /// 脚本初始化
     /// </summary>
-    private void Awake()
+    public void InitEverySlot()
     {
-        //找到slot下的Icon，并且找到其Image组件
-        iconObj = gameObject.transform.Find("Icon").gameObject;
-        if (iconObj != null)
+        //找到slot下的组件
+        if (slotObj != null)
         {
-            if (iconObj.GetComponent<Image>())
+            icon = SetGameObjectToParent.FindChildBreadthFirst(slotObj.transform, "Icon").GetComponent<Image>();
+
+            if(icon != null)
             {
-                //获取到icon的Image组件
-                icon = iconObj.GetComponent<Image>();
+                //脚本启动后先将gameObject和sprite全部关闭
+                icon.gameObject.SetActive(false);
+                //获取到数量显示Text
+                itemCountText = SetGameObjectToParent.FindChildBreadthFirst(icon.gameObject.transform, "ItemCount").GetComponent<Text>();
+                //先关闭数量显示Text
+                itemCountText.gameObject.SetActive(false);
             }
-            else
-            {
-                Debug.LogError("没有找到iconObj下的Image组件，请检查代码！");
-            }
-            //脚本启动后先将gameObject和sprite全部关闭
-            iconObj.SetActive(false);
 
             //只有buy格子不需要拖拽脚本
             if(slotType != SlotType.Buy)
             {
                 //获取到拖拽脚本
-                dragItemScript = iconObj.GetComponent<DragItem>();
-                if (dragItemScript == null)
-                {
-                    Debug.LogError("dragItemScript是空的，请检查代码或者Hierarchy窗口");
-                }
+                dragItemScript = ComponentFinder.GetOrAddComponent<DragItem>(icon.gameObject);
             }
         }
         else
@@ -112,43 +111,74 @@ public class Slot : MonoBehaviour
         var item = inventory_Database.list[Index];
 
         //进行更新
-        UpdateIcon(item);
+        UpdateSlot(item);
     }
 
     /// <summary>
     /// 通过传进来的ItemData基类判断属于哪种物品类型，然后进行更新Icon(主要是因为item是ItemData类型的，无法直接转换成对应物品类型)
     /// </summary>
     /// <param name="items"></param>
-    public void UpdateIcon(ItemData item)
+    public void UpdateSlot(ItemData item)
     {
         //如果item类是FishItem类
-        if (item is FishItem fishItem && item.itemIdentifier.Type == "FishItem")
+        if (item is FishItem fishItem)
         {
-            //更新图片
-            icon.sprite = fishItem.Type.GetFishImage();
-            //启动Icon的GameObject
-            iconObj.gameObject.SetActive(true);
+            UpdateIconAndAmountUI<FishItem>(fishItem);
         }
         //如果item类是ToolItem类
-        else if (item is ToolItem toolItem && item.itemIdentifier.Type == "ToolItem")
+        else if (item is ToolItem toolItem)
         {
-            //更新图片
-            icon.sprite = toolItem.Type.GetToolImage();
-            //启动Icon的GameObject
-            iconObj.gameObject.SetActive(true);
+            UpdateIconAndAmountUI<ToolItem>(toolItem);
         }
         //如果item类是FishItem类
-        else if(item is PropItem propItem && item.itemIdentifier.Type == "PropItem")
+        else if (item is PropItem propItem)
         {
-            //更新图片
-            icon.sprite = propItem.Type.GetPropImage();
-            //启动Icon的GameObject
-            iconObj.gameObject.SetActive(true);
+            UpdateIconAndAmountUI<PropItem>(propItem);
+        }
+        else if (item is BaitItem baitItem)
+        {
+            UpdateIconAndAmountUI<BaitItem>(baitItem);
         }
         //如果这个item的数据为空的话，直接将这个格子下的icon关闭
         else
         {
-            iconObj.gameObject.SetActive(false);
+            icon.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 根据穿过来的数据更新Icon和数量UI
+    /// </summary>
+    /// <typeparam name="T">继承了ItemData的Item类</typeparam>
+    /// <param name="item">传进来的ItemData</param>
+    public void UpdateIconAndAmountUI<T>(ItemData item) where T : ItemData
+    {
+        if (item is T typeItem)
+        {
+            //获取图片
+            icon.sprite = typeItem.type.GetImage();
+            icon.gameObject.SetActive(true);
+            //如果传进来的item中物品数量大于1
+            if (item.amount > 1)
+            {
+                itemCountText.text = item.amount.ToString();
+                itemCountText.gameObject.SetActive(true);
+            }
+            //如果物品数量等于1就关闭数字显示
+            else if (item.amount == 1)
+            {
+                itemCountText.text = item.amount.ToString();
+                itemCountText.gameObject.SetActive(false);
+            }
+            //如果物品等于0的话
+            else
+            {
+                itemCountText.text = item.amount.ToString();
+                //关闭文字UI
+                itemCountText.gameObject.SetActive(false);
+                //关闭图片显示
+                icon.gameObject.SetActive(false);
+            }
         }
     }
 }

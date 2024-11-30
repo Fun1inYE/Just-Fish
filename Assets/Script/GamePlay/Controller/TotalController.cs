@@ -100,8 +100,6 @@ public class TotalController : MonoBehaviour
         //初始化命令列表
         commandListWithControllerDic = new Dictionary<string, List<ConvertController>>();
 
-        
-
         //脚本默认初始化enable为false
         enabled = false;
     }

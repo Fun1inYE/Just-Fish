@@ -34,6 +34,7 @@ public class SlotContainer : MonoBehaviour
             //给每一个格子进行初始化
             if (slots[i] != null)
             {
+                slots[i].InitEverySlot();
                 slots[i].Index = i;
             }
             else

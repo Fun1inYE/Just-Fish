@@ -16,6 +16,8 @@ public class DisplayTextDataConfig
     /// </summary>
     public string wireBreakText { get; private set; }
 
+    public string fullBagpack { get; private set; }
+
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -23,5 +25,6 @@ public class DisplayTextDataConfig
     {
         bitingHookText = "上钩了";
         wireBreakText = "线崩了";
+        fullBagpack = "背包满了";
     }
 }

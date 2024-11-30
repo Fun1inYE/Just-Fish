@@ -42,3 +42,14 @@ public class PropTypeFactory : IItemFactory<PropType>
         return new PropType(prefab);
     }
 }
+
+/// <summary>
+/// 使用工厂模式返回BaitType实例
+/// </summary>
+public class BaitTypeFactory : IItemFactory<BaitType>
+{
+    public BaitType CreateItem(GameObject prefab)
+    {
+        return new BaitType(prefab);
+    }
+}

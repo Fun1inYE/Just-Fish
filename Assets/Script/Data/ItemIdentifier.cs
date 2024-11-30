@@ -58,6 +58,15 @@ public class ItemIdentifier
     public PropQuality PropQualityIditenfier = 0;
 
     /// <summary>
+    /// 物品的数量(默认是0)
+    /// </summary>
+    public int amountIditenfier = 0;
+    /// <summary>
+    /// 物品的最大数量（默认是1）
+    /// </summary>
+    public int maxAmountIditenfier = 1;
+
+    /// <summary>
     /// 构造函数
     /// </summary>
     public ItemIdentifier()
@@ -68,7 +77,9 @@ public class ItemIdentifier
         FishWeight = 0f;
         ToolQualityIditenfier = 0;
         PropQualityIditenfier = 0;
-    }
+        amountIditenfier = 0;
+        maxAmountIditenfier = 1;
+}
 }
 
 /// <summary>

@@ -127,7 +127,7 @@ public class InventoryManager : MonoBehaviour
         //先将背包中的list填充起来才能进行操作
         for(int i = 0; i < content; i++)
         {
-            manager.list.Add(new ItemData());
+            manager.list.Add(new ItemData(new BaseType()));
             //给其中的标识符号也做初始化
             manager.list[i].itemIdentifier = new ItemIdentifier();
         }
@@ -264,9 +264,11 @@ public class InventoryManager : MonoBehaviour
                 return new ToolItem(new ToolType(ItemManager.Instance.GetGameObjectFromName(identifier.Name)), identifier.ToolQualityIditenfier);
             case "PropItem":
                 return new PropItem(new PropType(ItemManager.Instance.GetGameObjectFromName(identifier.Name)), identifier.PropQualityIditenfier);
+            case "BaitItem":
+                return new BaitItem(new BaitType(ItemManager.Instance.GetGameObjectFromName(identifier.Name)), identifier.maxAmountIditenfier, identifier.amountIditenfier);
             default:
                 //默认返回一个ItemData
-                return new ItemData();
+                return new ItemData(new BaseType());
         }
 
     }

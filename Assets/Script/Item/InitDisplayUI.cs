@@ -45,7 +45,7 @@ public class InitDisplayUI
         GameObject[] imageUIPrefabs = Resources.LoadAll<GameObject>(imageUIFolderPath);
         GameObject[] textUIPrefabs = Resources.LoadAll<GameObject>(textUIFolderPath);
 
-        // 获取 DisplayTextDataConfig 类的 Type 对象
+        // 获取 DisplayTextDataConfig 类的 type 对象
         Type type = textConfig.GetType();
         PropertyInfo[] propertyInfos = type.GetProperties();
 

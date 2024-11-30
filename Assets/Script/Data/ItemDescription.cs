@@ -7,5 +7,5 @@ public class ItemDescription : MonoBehaviour
     /// <summary>
     /// ÎïÆ·ÃèÊö
     /// </summary>
-    public string Desciption;
+    public string desciption;
 }

@@ -77,7 +77,7 @@ public class EquipmentSlotContainer : SlotContainer
                 //更新最后一次操作的ToolItem
                 lastToolItem = toolItem;
                 //获取到鱼竿名字
-                string name = toolItem.Type.ToolName;
+                string name = toolItem.type.name;
                 //从对象池中拿出对应的GameObject
                 fishRod = PoolManager.Instance.GetGameObjectFromPool(name);
                 //调整鱼竿的Scale
@@ -103,7 +103,7 @@ public class EquipmentSlotContainer : SlotContainer
                     totalController.fishandCastController.UnEquipmentFishRod();                
 
                     //获取到新鱼竿名字
-                    string name = toolItem1.Type.ToolName;
+                    string name = toolItem1.type.name;
                     //从对象池中拿出对应的GameObject
                     fishRod = PoolManager.Instance.GetGameObjectFromPool(name);
                     //调整鱼竿的Scale
@@ -138,7 +138,7 @@ public class EquipmentSlotContainer : SlotContainer
                 lastPropItem = propItem;
 
                 //获取到鱼鳔的名字
-                string name = propItem.Type.PropName;
+                string name = propItem.type.name;
                 //从对象池中拿出对应的GameObject
                 drift = PoolManager.Instance.GetGameObjectFromPool(name);
                 //将鱼鳔拿到玩家obj的对应点位上
@@ -162,7 +162,7 @@ public class EquipmentSlotContainer : SlotContainer
                     totalController.fishandCastController.UnEquipmentDrift();
 
                     //获取到鱼鳔的名字
-                    string name = propItem.Type.PropName;
+                    string name = propItem.type.name;
                     //从对象池中拿出对应的GameObject
                     drift = PoolManager.Instance.GetGameObjectFromPool(name);
                     //将鱼鳔拿到玩家obj的对应点位上

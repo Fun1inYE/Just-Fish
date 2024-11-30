@@ -8,12 +8,15 @@ using UnityEngine;
 /// </summary>
 public class GameRoot : MonoBehaviour
 {
-    //初始化鱼类信息
-    InitType<FishType> initFishType;
-    //初始化钓竿信息
-    InitType<ToolType> initToolType;
-    //初始化鱼鳔信息
-    InitType<PropType> initProptype;
+    //要初始化FishType的列表
+    public List<FishType> fishTypeList;
+    //要初始化ToolType的列表
+    public List<ToolType> toolTypeList;
+    //要初始化PropType的列表
+    public List<PropType> propTypeList;
+    //要初始化BaseType的列表
+    public List<BaitType> baitTypeList;
+
     //初始化UI信息
     InitDisplayUI initDisplayUI;
 
@@ -26,15 +29,12 @@ public class GameRoot : MonoBehaviour
 
     private void Awake()
     {
-        //初始化鱼类
-        initFishType = new InitType<FishType>("Prefab/Fish", new FishTypeFactory());
-        //初始化鱼类的信息
-        initFishType.InitTypes();
+        //初始化物品列表
+        InitList(fishTypeList, new FishTypeFactory());
+        InitList(toolTypeList, new ToolTypeFactory());
+        InitList(propTypeList, new PropTypeFactory());
+        InitList(baitTypeList, new BaitTypeFactory());
 
-        initToolType = new InitType<ToolType>("Prefab/FishRod", new ToolTypeFactory());
-        initToolType.InitTypes();
-        initProptype = new InitType<PropType>("Prefab/Drift", new PropTypeFactory());
-        initProptype.InitTypes();
         initDisplayUI = new InitDisplayUI("Prefab/UI/DisplayUI", "Prefab/UI/DisplayText");
         initDisplayUI.InitTypes();
 
@@ -51,13 +51,34 @@ public class GameRoot : MonoBehaviour
     {
         //将帧数限制到165帧
         Application.targetFrameRate = 165;
-        //查询鱼类字典中的元素
-        //ItemManager.Instance.CheckDicElement();
+    }
+
+    /// <summary>
+    /// 对传进来的初始化列表及逆行初始化
+    /// </summary>
+    /// <typeparam name="T">继承BaseType的类</typeparam>
+    /// <param name="list">要初始化列表</param>
+    /// <param name="factory">对应的实例化工厂类</param>
+    public void InitList<T>(List<T> list, IItemFactory<T> factory) where T : BaseType
+    {
+        //如果传进来的list不为空的话
+        if (list.Count == 0)
+        {
+            Debug.LogWarning($"{list.GetType().Name}中是空的，请检查该列表是不是有问题");
+            return;
+        }
+        foreach (T type in list)
+        {
+            Debug.Log(type.obj);
+            //从抽象工厂类获取对应类的实例
+            T buildType = factory.CreateItem(type.obj);
+            //将实例传入ItemManager中的字典
+            ItemManager.Instance.AddOrGetType(buildType, buildType.obj);
+        }
     }
 
     private void Update()
     {
-
         //------------------------------------------TestCode--------------------------------------------------//
 
         if (Input.GetKeyDown(KeyCode.V))
@@ -113,6 +134,31 @@ public class GameRoot : MonoBehaviour
             InventoryManager.Instance.proppackManager.AddItemInList(new PropItem(element.Key, (PropQuality)randomNumber2));
             //然后更新UI
             InventoryManager.Instance.proppackSlotContainer.RefreshSlotUI();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            //随机生成字典中的一个数字
+            int randomNumber = Random.Range(0, ItemManager.Instance.GetDictionary<BaitType>().Count - 1);
+            //使用ElementAt随机访问键值对
+            var element = ItemManager.Instance.GetDictionary<BaitType>().ElementAt(randomNumber);
+
+            //存入Inventory
+            InventoryManager.Instance.proppackManager.AddItemInList(new BaitItem(element.Key, 99, 1), 1);
+            //然后更新UI
+            InventoryManager.Instance.proppackSlotContainer.RefreshSlotUI();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            InventoryManager.Instance.proppackManager.DeleteLastItemInList();
+            //然后更新UI
+            InventoryManager.Instance.proppackSlotContainer.RefreshSlotUI();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            ItemManager.Instance.CheckDictionary();
         }
     }
 }

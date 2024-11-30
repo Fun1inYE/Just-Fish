@@ -164,8 +164,8 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
                 {
                     floatingController.OpenFloating(true, false, false);
                     //更新fishItemFloatingScript数据
-                    floatingController.fishItemFloatingScript.Name.text = fishItem.Type.FishName;
-                    floatingController.fishItemFloatingScript.FishedTime.text = fishItem.Type.fishedTime;
+                    floatingController.fishItemFloatingScript.Name.text = fishItem.type.name;
+                    floatingController.fishItemFloatingScript.FishedTime.text = fishItem.fishedTime;
                     floatingController.fishItemFloatingScript.LengthValue.text = fishItem.Length.ToString();
                     floatingController.fishItemFloatingScript.WeightValue.text = fishItem.Weight.ToString();
                 }
@@ -175,9 +175,9 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
                 {
                     floatingController.OpenFloating(false, true, false);
                     //更新toolItemFloatingScript的数据
-                    floatingController.toolItemFloatingScript.Name.text = toolItem.Type.ToolName;
+                    floatingController.toolItemFloatingScript.Name.text = toolItem.type.name;
                     floatingController.toolItemFloatingScript.ToolQuality.text = GetToolQualityInfo(toolItem);
-                    floatingController.toolItemFloatingScript.Description.text = toolItem.Type.ToolDescription;
+                    floatingController.toolItemFloatingScript.Description.text = toolItem.type.description;
                 }
                 break;
             case SlotType.PropItem:
@@ -185,9 +185,9 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
                 {
                     floatingController.OpenFloating(false, false, true);
                     //更新propItemFloatingScript的数据
-                    floatingController.propItemFloatingScript.Name.text = propItem.Type.PropName;
+                    floatingController.propItemFloatingScript.Name.text = propItem.type.name;
                     floatingController.propItemFloatingScript.PropQuality.text = GetPropQualityInfo(propItem);
-                    floatingController.propItemFloatingScript.Description.text = propItem.Type.PropDescription;
+                    floatingController.propItemFloatingScript.Description.text = propItem.type.description;
                 }
                 break;
             //一般不会执行到这里
