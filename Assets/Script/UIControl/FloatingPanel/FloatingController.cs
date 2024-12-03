@@ -9,6 +9,11 @@ using UnityEngine;
 public class FloatingController : MonoBehaviour
 {
     /// <summary>
+    /// 获取到悬浮面板的脚本
+    /// </summary>
+    public FloatingPanel floatingPanelScript;
+
+    /// <summary>
     /// 引用鱼类悬浮面板的脚本
     /// </summary>
     public FishItemFloating fishItemFloatingScript;

@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 4115074495728525866}
   - component: {fileID: 6634774788946886819}
   - component: {fileID: 5790162291104322512}
+  - component: {fileID: -8495881643916080574}
+  - component: {fileID: 3266666161415359838}
   m_Layer: 0
-  m_Name: Master_Bait
+  m_Name: "\u9AD8\u7EA7\u9C7C\u9975"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,3 +100,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   desciption: 
+--- !u!114 &-8495881643916080574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8936510345774798443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3503598f29a73534eb849f72284a32b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3266666161415359838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8936510345774798443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3503598f29a73534eb849f72284a32b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

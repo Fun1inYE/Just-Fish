@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +38,16 @@ public class FishIndicatorController : MonoBehaviour, IController
     public BreakStripSlot breakStripSlotScript;
 
     /// <summary>
+    /// 引用钓鱼数据管理器
+    /// </summary>
+    public FishAndCastDataManager fishAndCastDataManager;
+
+    /// <summary>
+    /// 创建一个更新钓鱼数据的事件
+    /// </summary>
+    public Action OnUpdateFishingData;
+
+    /// <summary>
     /// 来自于ICommand接口，判断该控制器是否能运行
     /// </summary>
     private bool _canRun = true;
@@ -59,6 +70,8 @@ public class FishIndicatorController : MonoBehaviour, IController
         processStripSlotScript = ComponentFinder.GetChildComponent<ProcessStripSlot>(gameObject, "ProcessStripSlot");
         breakStripSlotScript = ComponentFinder.GetChildComponent<BreakStripSlot>(gameObject, "BreakStripSlot");
 
+        fishAndCastDataManager = GetComponent<FishAndCastDataManager>();
+
         //初始化默认enable为false
         enabled = false;
     }
@@ -69,6 +82,17 @@ public class FishIndicatorController : MonoBehaviour, IController
     public void RegisterFishIndicatorController()
     {
         enabled = true;
+
+        //将更新数据的方法注册到事件当中
+        OnUpdateFishingData += SetIndicatorWidth;
+        OnUpdateFishingData += SetIndicatorSpeed;
+        OnUpdateFishingData += SetProcessStripUpSpeed;
+        OnUpdateFishingData += SetProcessStripDown;
+        OnUpdateFishingData += SetNeedleInitWidth;
+        OnUpdateFishingData += SetNeedleThicknessSpeed;
+        OnUpdateFishingData += SetNeedleDownSpeed;
+        OnUpdateFishingData += SetBreakStripUpSpeed;
+        OnUpdateFishingData += SetBreakStripDownSpeed;
     }
 
     public void Update()
@@ -83,6 +107,42 @@ public class FishIndicatorController : MonoBehaviour, IController
             ControlBreakStripSlot();
         }
         
+    }
+
+    private void OnDestroy()
+    {
+        //取消注册
+        OnUpdateFishingData -= SetIndicatorWidth;
+        OnUpdateFishingData -= SetIndicatorSpeed;
+        OnUpdateFishingData -= SetProcessStripUpSpeed;
+        OnUpdateFishingData -= SetProcessStripDown;
+        OnUpdateFishingData -= SetNeedleInitWidth;
+        OnUpdateFishingData -= SetNeedleThicknessSpeed;
+        OnUpdateFishingData -= SetNeedleDownSpeed;
+        OnUpdateFishingData -= SetBreakStripUpSpeed;
+        OnUpdateFishingData -= SetBreakStripDownSpeed;
+    }
+
+    /// <summary>
+    /// 设定钓鱼指示器能否打开
+    /// </summary>
+    /// <param name="active"></param>
+    public void FishingIndicatorSetActive(bool active)
+    {
+        if(active)
+        {
+            //融合数据
+            fishAndCastDataManager.FixUpFishIndicatorData();
+            //更新数据
+            OnUpdateFishingData.Invoke();
+            //启动钓鱼指示器
+            fishIndicatorRectTransform.gameObject.SetActive(active);
+        }
+        else
+        {
+            //关闭钓鱼指示器
+            fishIndicatorRectTransform.gameObject.SetActive(active);
+        }
     }
 
     /// <summary>
@@ -126,4 +186,84 @@ public class FishIndicatorController : MonoBehaviour, IController
         breakStripSlotScript.RiseStrip();
     }
 
+    /// <summary>
+    /// 设置Indicator的宽度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetIndicatorWidth()
+    {
+        indicatorScript.indicatorWidth = fishAndCastDataManager.indicatorWidth;
+    }
+
+    /// <summary>
+    /// 设置Indicator的速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetIndicatorSpeed()
+    {
+        indicatorScript.indicatorMoveSpeed = fishAndCastDataManager.indicatorMoveSpeed;
+    }
+
+    /// <summary>
+    /// 设置钓鱼进度的增长速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetProcessStripUpSpeed()
+    {
+        processStripSlotScript.processStripSpeed = fishAndCastDataManager.processStripSpeed;
+    }
+
+    /// <summary>
+    /// 设置钓鱼的进度的减少速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetProcessStripDown()
+    {
+        processStripSlotScript.processStripDownSpeed = fishAndCastDataManager.processStripDownSpeed;
+    }
+
+    /// <summary>
+    /// 设置指针的初始宽度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetNeedleInitWidth()
+    {
+        needleScript.needleWidth = fishAndCastDataManager.needleWidth;
+    }
+
+    /// <summary>
+    /// 设置指针的变宽速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetNeedleThicknessSpeed()
+    {
+        needleScript.needleThicknessSpeed = fishAndCastDataManager.needleThicknessSpeed;
+    }
+
+    /// <summary>
+    /// 设置指针变窄的速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetNeedleDownSpeed()
+    {
+        needleScript.needleThinkDownSpeed = fishAndCastDataManager.needleThinkDownSpeed;
+    }
+
+    /// <summary>
+    /// 设置磨损条增大的速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetBreakStripUpSpeed()
+    {
+        breakStripSlotScript.breakdownStripSpeed = fishAndCastDataManager.breakdownStripSpeed;
+    }
+
+    /// <summary>
+    /// 设置磨损条变窄的速度
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetBreakStripDownSpeed()
+    {
+        breakStripSlotScript.breakDownStripDownSpeed = fishAndCastDataManager.breakDownStripDownSpeed;
+    }
 }

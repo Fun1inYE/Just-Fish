@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -39,10 +40,6 @@ public class TotalController : MonoBehaviour
     /// </summary>
     public StoreController storeController { get; set; }
     /// <summary>
-    /// 引用悬浮板相关的控制器
-    /// </summary>
-    public FloatingController floatingController { get; set; }
-    /// <summary>
     /// 获取到相机跟随控制
     /// </summary>
     public CameraFollowController cameraFollowController { get; set; }
@@ -62,11 +59,15 @@ public class TotalController : MonoBehaviour
     public Dictionary<string, List<ConvertController>> commandListWithControllerDic;
 
     /// <summary>
+    /// 单例模式
+    /// </summary>
+    public static TotalController Instance;
+
+    /// <summary>
     /// 脚本初始化
     /// </summary>
     private void Awake()
     {
-        
         inventoryController = SetGameObjectToParent.FindFromFirstLayer("InventoryCanvas").GetComponent<InventoryController>();
         if (inventoryController == null)
         {
@@ -77,16 +78,6 @@ public class TotalController : MonoBehaviour
         if (storeController == null)
         {
             Debug.LogError("storeController是空的，请检查代码！");
-        }
-        floatingController = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("DisplayFloatingPanelCanvas").transform, "FloatingPanel").GetComponent<FloatingController>();
-        if (floatingController != null)
-        {
-            //提前初始化悬浮面板
-            floatingController.InitializeFloatingPanel();
-        }
-        else
-        {
-            Debug.LogError("floatingController是空的，请检查代码！");
         }
         storeDataAndUIController = SetGameObjectToParent.FindFromFirstLayer("StoreCanvas").GetComponent<StoreDataAndUIController>();
         if(storeDataAndUIController == null)
@@ -99,6 +90,16 @@ public class TotalController : MonoBehaviour
 
         //初始化命令列表
         commandListWithControllerDic = new Dictionary<string, List<ConvertController>>();
+
+        //单例初始化
+        if(Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
 
         //脚本默认初始化enable为false
         enabled = false;

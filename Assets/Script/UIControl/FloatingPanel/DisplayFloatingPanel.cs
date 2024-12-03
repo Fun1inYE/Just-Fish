@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditorInternal.VersionControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -11,13 +13,9 @@ using UnityEngine.UIElements;
 public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
 {
     /// <summary>
-    /// 引用到悬浮窗的GameObject
+    /// 引用floatingPanel脚本
     /// </summary>
-    public GameObject floatingPanel;
-    /// <summary>
-    /// 引用悬浮面板控制器
-    /// </summary>
-    public FloatingController floatingController;
+    public FloatingPanel floatingPanel;
     /// <summary>
     /// 引用悬浮窗的RectTransform
     /// </summary>
@@ -37,22 +35,16 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
     private void Awake()
     {
         //获取floatingPanel
-        floatingPanel = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("DisplayFloatingPanelCanvas").transform, "FloatingPanel").gameObject;
+        floatingPanel = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("DisplayFloatingPanelCanvas").transform, "FloatingPanel").GetComponent<FloatingPanel>();
         if (floatingPanel == null)
         {
             Debug.LogError("floatingPanel是空的，请检查代码！");
         }
         //获取floatingPanelRectTransform
-        floatingPanelRectTransform = floatingPanel.GetComponent<RectTransform>();
-        if(floatingPanelRectTransform == null)
+        floatingPanelRectTransform = floatingPanel.gameObject.GetComponent<RectTransform>();
+        if (floatingPanelRectTransform == null)
         {
             Debug.LogError("floatingPanelRectTransform是空的，请检查代码！");
-        }
-        //获取floatingController
-        floatingController = floatingPanel.GetComponent<FloatingController>();
-        if (floatingController == null)
-        {
-            Debug.LogError("floatingController是空的，请检查代码！");
         }
         //获取slot脚本
         slot = GetComponentInParent<Slot>();
@@ -67,6 +59,8 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
             Debug.LogError("没有找到cameraCanvas，请检查代码！");
         }
 
+        //初始化floatingPanel
+        floatingPanel.InitFloatingPanelObj();
     }
 
     private void Update()
@@ -107,12 +101,13 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //先识别鼠标指在什么Slot上了
-        SlotType slotType = slot.interiorSlotType;
+        //先识别鼠标指在什么物品上了
+        var item = slot.inventory_Database.list[slot.Index];
         //打开悬浮板
-        floatingPanel.SetActive(true);
+        floatingPanel.gameObject.SetActive(true);
         //更新悬浮板内的信息
-        UpdatePanelData(slotType);
+        UpdatePanelData(item);
+        
     }
 
     /// <summary>
@@ -121,10 +116,8 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        //关闭所有悬浮板
-        floatingController.CloseAllFloating();
         //关闭悬浮板
-        floatingPanel.SetActive(false);
+        floatingPanel.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -133,10 +126,8 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
     /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
-        //关闭所有悬浮板
-        floatingController.CloseAllFloating();
         //关闭悬浮板
-        floatingPanel.SetActive(false);
+        floatingPanel.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -145,55 +136,42 @@ public class DisplayFloatingPanel : MonoBehaviour, IPointerDownHandler, IPointer
     /// <param name="eventData"></param>
     public void OnPointerUp(PointerEventData eventData)
     {
-        //关闭所有悬浮板
-        floatingController.CloseAllFloating();
         //关闭悬浮板
-        floatingPanel.SetActive(false);
+        floatingPanel.gameObject.SetActive(false);
     }
 
     /// <summary>
     /// 通过slot的种类更新悬浮板的数据
     /// </summary>
     /// <param name="slotType">slot的种类</param>
-    public void UpdatePanelData(SlotType slotType)
+    public void UpdatePanelData(ItemData item)
     {
-        switch(slotType)
+        switch(item)
         {
-            case SlotType.FishItem:
-                if (slot.inventory_Database.list[slot.Index] is FishItem fishItem)
-                {
-                    floatingController.OpenFloating(true, false, false);
-                    //更新fishItemFloatingScript数据
-                    floatingController.fishItemFloatingScript.Name.text = fishItem.type.name;
-                    floatingController.fishItemFloatingScript.FishedTime.text = fishItem.fishedTime;
-                    floatingController.fishItemFloatingScript.LengthValue.text = fishItem.Length.ToString();
-                    floatingController.fishItemFloatingScript.WeightValue.text = fishItem.Weight.ToString();
-                }
+            case FishItem fishItem:
+                floatingPanel.GetNameUI().text = fishItem.type.name;
+                floatingPanel.GetDeputyUI().text = fishItem.fishedTime.ToString();
+                floatingPanel.GetDescriptionUI().text = fishItem.type.description;
                 break;
-            case SlotType.ToolItem:
-                if (slot.inventory_Database.list[slot.Index] is ToolItem toolItem)
-                {
-                    floatingController.OpenFloating(false, true, false);
-                    //更新toolItemFloatingScript的数据
-                    floatingController.toolItemFloatingScript.Name.text = toolItem.type.name;
-                    floatingController.toolItemFloatingScript.ToolQuality.text = GetToolQualityInfo(toolItem);
-                    floatingController.toolItemFloatingScript.Description.text = toolItem.type.description;
-                }
+            case ToolItem toolItem:
+                floatingPanel.GetNameUI().text = toolItem.type.name;
+                floatingPanel.GetDeputyUI().text = toolItem.toolQuality.ToString();
+                floatingPanel.GetDescriptionUI().text = toolItem.type.description;
                 break;
-            case SlotType.PropItem:
-                if (slot.inventory_Database.list[slot.Index] is PropItem propItem)
-                {
-                    floatingController.OpenFloating(false, false, true);
-                    //更新propItemFloatingScript的数据
-                    floatingController.propItemFloatingScript.Name.text = propItem.type.name;
-                    floatingController.propItemFloatingScript.PropQuality.text = GetPropQualityInfo(propItem);
-                    floatingController.propItemFloatingScript.Description.text = propItem.type.description;
-                }
+            case PropItem propItem:
+                floatingPanel.GetNameUI().text = propItem.type.name;
+                floatingPanel.GetDeputyUI().text = propItem.propQuality.ToString();
+                floatingPanel.GetDescriptionUI().text = propItem.type.description;
+                break;
+            case BaitItem baitItem:
+                floatingPanel.GetNameUI().text = baitItem.type.name;
+                floatingPanel.GetDeputyUI().text = "数量：" + baitItem.amount.ToString();
+                floatingPanel.GetDescriptionUI().text = baitItem.type.description;
                 break;
             //一般不会执行到这里
             default:
                 //关闭所有floating
-                floatingController.CloseAllFloating();
+                floatingPanel.gameObject.SetActive(false);
                 break;
         }
     }

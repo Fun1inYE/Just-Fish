@@ -17,9 +17,19 @@ public class Indicator : MonoBehaviour
     public RectTransform indicator;
 
     /// <summary>
+    /// indicator的初始位置
+    /// </summary>
+    public Vector2 initPosition;
+
+    /// <summary>
     /// 获取到Indicator的四个角
     /// </summary>
     public Vector3[] indicatorFourCorners;
+
+    /// <summary>
+    /// Indicator的宽度
+    /// </summary>
+    public float indicatorWidth = 40f;
 
     /// <summary>
     /// Indicator的移动速度
@@ -39,6 +49,9 @@ public class Indicator : MonoBehaviour
     {
         fishIndicatorController = SetGameObjectToParent.FindFromFirstLayer("FishingIndicatorCanvas").GetComponent<FishIndicatorController>();
         indicator = GetComponent<RectTransform>();
+
+        initPosition = indicator.anchoredPosition;
+
         if (indicator == null)
         {
             Debug.LogError("fishIndicatorMoveRange是空的，请检查代码！");
@@ -46,15 +59,15 @@ public class Indicator : MonoBehaviour
         indicatorFourCorners = new Vector3[4];
     }
 
-    /// <summary>
-    /// 初始化四个角
-    /// </summary>
-    public void Start()
+    public void OnEnable()
     {
+        indicator.sizeDelta = new Vector2(indicatorWidth, indicator.sizeDelta.y);
+        //让indicator回到初始位置
+        indicator.anchoredPosition = new Vector2(initPosition.x, initPosition.y);
         //获取到四个角的坐标
         indicatorFourCorners = GetFourCorners.GetFourCornersCoordinate(indicator);
     }
-    
+
     /// <summary>
     /// Indicator移动的方法
     /// </summary>

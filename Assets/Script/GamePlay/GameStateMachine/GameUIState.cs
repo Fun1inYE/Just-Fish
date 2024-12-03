@@ -103,9 +103,8 @@ public class OpeningInventory : GameUIState
         //当检测到背包关闭的时候，GameMachine就会转到isGaming状态
         if (gsm.totalController.inventoryController.isOpen == false)
         {
-            //关闭背包的时候同时也关闭悬浮板
-            gsm.totalController.floatingController.CloseAllFloating();
-            gsm.totalController.floatingController.gameObject.SetActive(false);
+            //TODO: 关闭背包的时候同时也关闭悬浮板
+
             //转状态
             gsm.SetGameState(new isGaming());
         }
@@ -218,9 +217,8 @@ public class OpeningStore : GameUIState
         //当检测到关闭商店界面，跳转到isGaming状态
         if (gsm.totalController.storeController.storePanelisOpening == false)
         {
-            //关闭商店界面的时候同时也关闭悬浮板
-            gsm.totalController.floatingController.CloseAllFloating();
-            gsm.totalController.floatingController.gameObject.SetActive(false);
+            //TODO: 关闭商店界面的时候同时也关闭悬浮板
+
             //跳转状态
             gsm.SetGameState(new isGaming());
         }
@@ -269,9 +267,8 @@ public class OpeningSalePanel : GameUIState
         //当检测到卖出界面被关闭之后
         if (gsm.totalController.storeController.salePanelisOpening == false)
         {
-            //关闭的时候同时也关闭悬浮板
-            gsm.totalController.floatingController.CloseAllFloating();
-            gsm.totalController.floatingController.gameObject.SetActive(false);
+            //TODO: 关闭的时候同时也关闭悬浮板
+
             //转状态
             gsm.SetGameState(new isGaming());
         }

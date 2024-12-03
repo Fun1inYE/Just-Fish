@@ -18,6 +18,10 @@ public class FishandCastController : MonoBehaviour, IController
     /// </summary>
     public Drift driftScript;
     /// <summary>
+    /// 诱饵的脚本
+    /// </summary>
+    public Bait baitScript;
+    /// <summary>
     /// 判断是否初始化了鱼竿(默认false)
     /// </summary>
     public bool isInitFishRod = false;
@@ -25,6 +29,10 @@ public class FishandCastController : MonoBehaviour, IController
     /// 判断是否初始化了鱼鳔(默认false)
     /// </summary>
     public bool isInitDrift = false;
+    /// <summary>
+    /// 判断是否初始化了诱饵（默认为false）
+    /// </summary>
+    public bool isInitBait = false;
     /// <summary>
     /// 判断是否可以收鱼竿（默认为true）
     /// </summary>
@@ -55,6 +63,15 @@ public class FishandCastController : MonoBehaviour, IController
     public DrawLine drawLine;
 
     /// <summary>
+    /// 鱼竿数据管理器
+    /// </summary>
+    public FishRodManager fishRodManager;
+    /// <summary>
+    /// 鱼鳔管理器
+    /// </summary>
+    public DriftManager driftManager;
+
+    /// <summary>
     /// 来自于ICommand接口，判断该控制器是否能运行
     /// </summary>
     private bool _canRun = true;
@@ -75,6 +92,8 @@ public class FishandCastController : MonoBehaviour, IController
     private void Awake()
     {
         drawLine = ComponentFinder.GetChildComponent<DrawLine>(gameObject, "FishRodPoint");
+        fishRodManager = gameObject.GetComponent<FishRodManager>();
+        driftManager = gameObject.GetComponent<DriftManager>();
 
         // 初始化命令列表
         commandList = new List<IFishCommand>();
@@ -92,6 +111,8 @@ public class FishandCastController : MonoBehaviour, IController
             fishRodScript = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("Player").transform, "FishRodPoint").GetChild(0).GetComponent<FishRod>();
             //初始化鱼竿位置
             fishRodScript.transform.localPosition = Vector3.zero;
+            //刷新钓竿的基础数值
+            fishRodManager.UpdateFishRodData(fishRodScript.gameObject);
             //如果二者都装备好了就会调用这个方法
             PutDriftToWire();
             isInitFishRod = true;
@@ -124,7 +145,9 @@ public class FishandCastController : MonoBehaviour, IController
             driftScript = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("Player").transform, "DriftPoint").GetChild(0).GetComponent<Drift>();
             //初始化鱼漂位置
             driftScript.transform.localPosition = Vector3.zero;
-            //如果二者都装备好了就会调用这个方法
+            //刷新鱼鳔的基础数据
+            driftManager.UpdateDriftData(driftScript.gameObject);
+            //如果二者都装备好了就会调用这个方法,将鱼鳔移动到竿头
             PutDriftToWire();
             isInitDrift = true;
         }
@@ -137,6 +160,27 @@ public class FishandCastController : MonoBehaviour, IController
     {
         driftScript = null;
         isInitDrift = false;
+    }
+
+    /// <summary>
+    /// 装备鱼鳔的方法
+    /// </summary>
+    public void EquipmentBait()
+    {
+        //防止重复装备
+        if(isInitBait == false)
+        {
+            isInitDrift = true;
+        }
+    }
+
+    /// <summary>
+    /// 卸载鱼鳔的方法
+    /// </summary>
+    public void UnEquipmentBait()
+    {
+        baitScript = null;
+        isInitBait = false;
     }
 
     /// <summary>

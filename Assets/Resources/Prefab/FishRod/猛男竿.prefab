@@ -144,4 +144,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb661e9dc08317e4fb9c9f726205c43d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Desciption: "\u731B\u7537\u8272\uFF01\u731B\u7537\u7528\uFF01\u731B\u7537\u7528\u4E86\u90FD\u8BF4\u597D\uFF01"
+  desciption: "\u731B\u7537\u8272\uFF0C\u731B\u7537\u7528\u4E86\u90FD\u8BF4\u597D\uFF01"

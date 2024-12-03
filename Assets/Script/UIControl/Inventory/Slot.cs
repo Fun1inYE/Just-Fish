@@ -181,4 +181,13 @@ public class Slot : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// 返回对应格子中的物品
+    /// </summary>
+    /// <returns></returns>
+    public ItemData GetSlotItem()
+    {
+        return inventory_Database.list[Index];
+    }
 }

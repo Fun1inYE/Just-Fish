@@ -16,7 +16,7 @@ public class Needle : MonoBehaviour
     /// <summary>
     /// 指示器的初始宽度(默认1f)
     /// </summary>
-    public float initialWidth = 1f;
+    public float needleWidth = 1f;
     /// <summary>
     /// 指示器变宽的速度(默认30f)
     /// </summary>
@@ -24,7 +24,7 @@ public class Needle : MonoBehaviour
     /// <summary>
     /// 指示器变窄的速度(默认15f)
     /// </summary>
-    public float needleThinDownSpeed = 15f;
+    public float needleThinkDownSpeed = 15f;
     
     /// <summary>
     /// 脚本初始化
@@ -43,7 +43,7 @@ public class Needle : MonoBehaviour
         if (needle != null)
         {
             //给指示器初始化
-            needle.sizeDelta = new Vector2(initialWidth, needle.sizeDelta.y);
+            needle.sizeDelta = new Vector2(needleWidth, needle.sizeDelta.y);
         }
     }
 
@@ -67,9 +67,9 @@ public class Needle : MonoBehaviour
             //松开空格键之后，指示条逐渐缩回到初始宽度
 
             //计算新宽度
-            currentWidth -= needleThinDownSpeed * Time.deltaTime;
+            currentWidth -= needleThinkDownSpeed * Time.deltaTime;
             //限制最大宽度
-            currentWidth = Mathf.Max(currentWidth, initialWidth);
+            currentWidth = Mathf.Max(currentWidth, needleWidth);
 
         }
         //更新指示器的宽度

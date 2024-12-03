@@ -20,6 +20,10 @@ public class EquipmentSlotContainer : SlotContainer
     /// </summary>
     public GameObject drift;
     /// <summary>
+    /// 装备格子中的诱饵(默认为null)
+    /// </summary>
+    public GameObject bait;
+    /// <summary>
     /// 最后一次操作的ToolItem
     /// </summary>
     public ItemData lastToolItem;
@@ -27,6 +31,10 @@ public class EquipmentSlotContainer : SlotContainer
     /// 最后一次操作的PropItem
     /// </summary>
     public ItemData lastPropItem;
+    /// <summary>
+    /// 最后一次操作的BaitItem
+    /// </summary>
+    public ItemData lastBaitItem;
 
     /// <summary>
     /// 注册总控制器
@@ -35,9 +43,10 @@ public class EquipmentSlotContainer : SlotContainer
     {
         //总控制器初始化
         totalController = SetGameObjectToParent.FindFromFirstLayer("GameRoot").GetComponent<TotalController>();
-        //同时个两个装备初始化
+        //同时三个装备初始化
         fishRod = null;
         drift = null;
+        bait = null;
     }
 
     /// <summary>
@@ -59,7 +68,7 @@ public class EquipmentSlotContainer : SlotContainer
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-            Debug.Log(fishRod + "   " + drift);
+            Debug.Log(fishRod + "   " + drift + "   " + bait);
         }
     }
     #endregion 
@@ -70,9 +79,10 @@ public class EquipmentSlotContainer : SlotContainer
     public void CheckEquipmentSlotAndEquip()
     {
         //鱼竿装备栏如果不是空的话
-        if (slots[0].inventory_Database.list[slots[0].Index].itemIdentifier.Type == "ToolItem")
+        if (slots[0].inventory_Database.list[slots[0].Index] is ToolItem toolItem)
         {
-            if (fishRod == null && slots[0].inventory_Database.list[slots[0].Index] is ToolItem toolItem)
+            //之前没有鱼竿的情况，又放上的鱼竿
+            if (fishRod == null)
             {
                 //更新最后一次操作的ToolItem
                 lastToolItem = toolItem;
@@ -87,14 +97,14 @@ public class EquipmentSlotContainer : SlotContainer
                 //调用钓鱼控制器初始化鱼竿
                 totalController.fishandCastController.EquipmentFishRod();
             }
-            //直接给道具格子交换物品的情况
-            if (fishRod != null && slots[0].inventory_Database.list[slots[0].Index] is ToolItem toolItem1)
+            //直接给装备格子交换物品的情况
+            if (fishRod != null)
             {
                 //如果这次的toolItem跟以前的不一样的话，就进行交换
-                if(lastToolItem != toolItem1)
+                if(lastToolItem != toolItem)
                 {
                     //更新最后一次操作的ToolItem
-                    lastToolItem = toolItem1;
+                    lastToolItem = toolItem;
 
                     //先将原鱼竿放回对象池中
                     PoolManager.Instance.ReturnGameObjectToPool(fishRod);
@@ -103,7 +113,7 @@ public class EquipmentSlotContainer : SlotContainer
                     totalController.fishandCastController.UnEquipmentFishRod();                
 
                     //获取到新鱼竿名字
-                    string name = toolItem1.type.name;
+                    string name = toolItem.type.name;
                     //从对象池中拿出对应的GameObject
                     fishRod = PoolManager.Instance.GetGameObjectFromPool(name);
                     //调整鱼竿的Scale
@@ -116,7 +126,7 @@ public class EquipmentSlotContainer : SlotContainer
             }
         }
         //直接将鱼竿从装备栏拿下来情况
-        else if (slots[0].inventory_Database.list[slots[0].Index].itemIdentifier.Type == "defaultType" && fishRod != null)
+        else if (slots[0].inventory_Database.list[slots[0].Index] is ItemData && fishRod != null)
         {
             PoolManager.Instance.ReturnGameObjectToPool(fishRod);
             SetGameObjectToParent.SetParent("Pool", fishRod);
@@ -129,7 +139,7 @@ public class EquipmentSlotContainer : SlotContainer
         //-----------------------------------------------------------------------------------------------------------------------//
 
         //鱼漂装备栏如果是PropItem类型
-        if (slots[1].inventory_Database.list[slots[1].Index].itemIdentifier.Type == "PropItem" && slots[1].inventory_Database.list[slots[1].Index] is PropItem propItem)
+        if (slots[1].inventory_Database.list[slots[1].Index] is PropItem propItem)
         {
             //如果propItem不为空且装备格子没有鱼鳔
             if (drift == null)
@@ -171,10 +181,9 @@ public class EquipmentSlotContainer : SlotContainer
                     totalController.fishandCastController.EquipmentDrift();
                 }
             }
-
         }
         //直接将鱼鳔从装备栏拿下来情况
-        else if (slots[1].inventory_Database.list[slots[1].Index].itemIdentifier.Type == "defaultType" && drift != null)
+        else if (slots[1].inventory_Database.list[slots[1].Index] is ItemData && drift != null)
         {
             //直接将drift送回对象池
             PoolManager.Instance.ReturnGameObjectToPool(drift);
@@ -185,7 +194,29 @@ public class EquipmentSlotContainer : SlotContainer
             totalController.fishandCastController.UnEquipmentDrift();
         }
 
-        //TODO:还有三号位
+        //-----------------------------------------------------------------------------------------------------------------------//
+
+        //装备三号位
+        if (slots[2].inventory_Database.list[slots[2].Index] is BaitItem baitItem)
+        {
+            if(bait = null)
+            {
+                lastBaitItem = baitItem;
+                totalController.fishandCastController.EquipmentBait();
+            }
+            if (bait != null)
+            {
+                if (lastBaitItem != baitItem)
+                {
+                    lastBaitItem = baitItem;
+                    totalController.fishandCastController.UnEquipmentBait();
+
+                    //TODO:还得添加细节
+                    totalController.fishandCastController.EquipmentBait();
+                }
+            }
+        }
+
 
     }
 

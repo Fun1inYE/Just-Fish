@@ -35,7 +35,6 @@ public class InventoryData
                 //如果在list中找到了与传进来的item的名字一样的物品
                 if (item.type.name == data.type.name)
                 {
-                    Debug.Log("找到了堆叠的物品");
                     //在判断此物品的堆叠数是否等于此物品的最大堆叠数
                     if(data.amount == data.maxAmount)
                     {
@@ -91,7 +90,8 @@ public class InventoryData
     /// 删除列表中对应序号的物品（删除一个格子中的全部数据）
     /// </summary>
     /// <param name="index">对应的物品序号</param>
-    public void DeleteItemInListFromIndex(int index)
+    /// /// <param name="deleteAll">是否删除一个格子中的全部数据（默认为false）</param>
+    public void DeleteItemInListFromIndex(int index, bool deleteAll = false)
     {
         //检测传进来的序号是否大于等于fishItemList的最大数量
         if (index + 1 >= list.Count && index < 0)
@@ -100,8 +100,16 @@ public class InventoryData
         }
         else
         {
-            //将从fishItemList对应序号的位置置空
-            list[index] = new ItemData(new BaseType());
+            if(deleteAll || list[index].amount == 0)
+            {
+                list[index] = new ItemData(new BaseType());
+            }
+            else
+            {
+                list[index].amount -= 1;
+                //更新Identifier
+                list[index].itemIdentifier.amountIditenfier = list[index].amount;
+            }
         }
     }
 

@@ -327,8 +327,9 @@ public class CatchingFish : FishingStatus
             fishing.totalController.fishIndicatorController.fishIndicatorRectTransform,
             OffsetLocation.Up
             );
+
         //打开钓鱼指示器UI
-        fishing.totalController.fishIndicatorController.fishIndicatorRectTransform.gameObject.SetActive(true);
+        fishing.totalController.fishIndicatorController.FishingIndicatorSetActive(true);
     }
 
     public void OnUpdate(FishingStateMachine fishing)
@@ -407,7 +408,7 @@ public class CatchingFish : FishingStatus
         //可以操作商店
         fishing.totalController.ControlManager<StoreController>("FishState", true, fishing.totalController.storeController);
         //关闭钓鱼指示器UI
-        fishing.totalController.fishIndicatorController.fishIndicatorRectTransform.gameObject.SetActive(false);
+        fishing.totalController.fishIndicatorController.FishingIndicatorSetActive(false);
     }
 }
 

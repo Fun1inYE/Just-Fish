@@ -80,6 +80,8 @@ GameObject:
   - component: {fileID: 8533526235394972830}
   - component: {fileID: 7625615880171513250}
   - component: {fileID: 323080246121940093}
+  - component: {fileID: 7541862451340706302}
+  - component: {fileID: 4522680084968908419}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -255,7 +257,6 @@ MonoBehaviour:
   jumpForce: 3
   checkGroundPoint: {fileID: 0}
   radius: 0.01
-  canMove: 1
   transformPoint_Left: {fileID: 0}
   transformPoint_Right: {fileID: 0}
 --- !u!114 &8533526235394972826
@@ -272,8 +273,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishRodScript: {fileID: 0}
   driftScript: {fileID: 0}
+  baitScript: {fileID: 0}
   isInitFishRod: 0
   isInitDrift: 0
+  isInitBait: 0
   canPutAwayRod: 1
   takeFishRode: 0
   hasCastRod: 0
@@ -281,8 +284,8 @@ MonoBehaviour:
   castingRodForce: 5
   distance: 6.5
   drawLine: {fileID: 0}
-  controlFishingControllerMachineName: 
-  suspendName: 
+  fishRodManager: {fileID: 0}
+  driftManager: {fileID: 0}
 --- !u!95 &8533526235394972830
 Animator:
   serializedVersion: 5
@@ -332,6 +335,34 @@ MonoBehaviour:
   coinAmount: {fileID: 0}
   experienceAmount: {fileID: 0}
   sallingCoin: {fileID: 0}
+--- !u!114 &7541862451340706302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8533526235394972819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c612b258ec92314aa991791cc71e610, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalController: {fileID: 0}
+  fishRodData: {fileID: 0}
+--- !u!114 &4522680084968908419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8533526235394972819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b7bd9d6ef1ab4aab5c3cfbe8f3fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalController: {fileID: 0}
+  driftData: {fileID: 0}
 --- !u!1 &8533526235507943514
 GameObject:
   m_ObjectHideFlags: 0
