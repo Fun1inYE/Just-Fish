@@ -38,11 +38,11 @@ public class FishItemFloating : MonoBehaviour
         if (FishedTime == null)
             Debug.LogError("FishedTime是空的，请检查代码！");
 
-        LengthValue = SetGameObjectToParent.FindChildBreadthFirst(transform.Find("Length").gameObject.transform, "LengthValue").GetComponent<Text>();
+        LengthValue = SetGameObjectToParent.FindChildBreadthFirst(transform.Find("length").gameObject.transform, "LengthValue").GetComponent<Text>();
         if (LengthValue == null)
             Debug.LogError("Length是空的，请检查代码！");
 
-        WeightValue = SetGameObjectToParent.FindChildBreadthFirst(transform.Find("Weight").gameObject.transform, "WeightValue").GetComponent<Text>();
+        WeightValue = SetGameObjectToParent.FindChildBreadthFirst(transform.Find("weight").gameObject.transform, "WeightValue").GetComponent<Text>();
         if (WeightValue == null)
             Debug.LogError("Weight是空的，请检查代码！");
     }

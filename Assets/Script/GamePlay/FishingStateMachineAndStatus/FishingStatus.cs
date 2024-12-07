@@ -165,22 +165,32 @@ public class Fishing : FishingStatus
     /// 判断玩家是否主动收杆(默认false)
     /// </summary>
     public bool initiativeReel = false;
+    /// <summary>
+    /// 判断玩家是否装备完全
+    /// </summary>
+    public bool isFinishedEquip = false;
 
     public void OnEnter(FishingStateMachine fishing)
     {
-        //禁用钓鱼指示器
-        fishing.totalController.fishIndicatorController.enabled = false;
+        //查看玩家是否装备栏是否完全
+        if(InventoryManager.Instance.equipmentSlotContainer.GetEquipmentSlotState())
+        {
+            //玩家装备完全了
+            isFinishedEquip = true;
+            //随机生成玩家所需要等待的时间
+            float countdownTime = fishing.fishingTimeManager.GetRangeOfFishingTime();
+            Debug.Log($"***这次生成的等待随机时间为{countdownTime}");
 
-        //随机生成玩家所需要等待的时间
-        float countdownTime = Random.Range(2f, 5f);
-        Debug.Log($"***这次生成的等待随机时间为{countdownTime}");
-
-        //将OnTimerFinished方法注册到计时器委托中
-        fishing.timer.OnTimerFinished += fishing.OnFishingTimeUp;
-
-        Debug.Log("***开始钓鱼，等待鱼上钩...");
-        //启动计时器
-        fishing.StartTimer(countdownTime);
+            //将OnTimerFinished方法注册到计时器委托中
+            fishing.timer.OnTimerFinished += fishing.OnFishingTimeUp;
+            //启动计时器
+            fishing.StartTimer(countdownTime);
+        }
+        else
+        {
+            Debug.Log("玩家没有装备全装备！");
+        }
+        
     }
 
     public void OnUpdate(FishingStateMachine fishing)
@@ -201,7 +211,7 @@ public class Fishing : FishingStatus
             return;
         }
 
-        //检测鱼竿和鱼鳔的距离
+        //检测鱼竿和鱼鳔的距离,判断是否需要收杆
         fishing.CheckDistanceRodAndDrift();
     }
 
@@ -212,15 +222,17 @@ public class Fishing : FishingStatus
     public void OnExit(FishingStateMachine fishing)
     {
         //因为是玩家主动收杆，鱼漂要往回移动，所以不能让地形卡住鱼漂
-        if(initiativeReel == true)
+        if(initiativeReel)
         { 
             fishing.totalController.fishandCastController.driftScript.driftCollider.enabled = false;
         }
-
-        //将对应方法取消注册到计时器中
-        fishing.timer.OnTimerFinished -= fishing.OnFishingTimeUp;
+        //判断是否需要主动移除委托中的方法
+        if(isFinishedEquip)
+        {
+            //将对应方法取消注册到计时器中
+            fishing.timer.OnTimerFinished -= fishing.OnFishingTimeUp;
+        }
     }
-
 }
 
 /// <summary>
@@ -241,10 +253,15 @@ public class BitingHook : FishingStatus
         fishing.totalController.ControlManager<MovePlayerController>("FishState", false, fishing.totalController.movePlayerController);
         //停止钓鱼控制器
         fishing.totalController.ControlManager<FishandCastController>("FishState", false, fishing.totalController.fishandCastController);
+        //删除一个当前装备的鱼饵
+        InventoryManager.Instance.equipmentManager.DeleteItemInListFromIndex(2);
+        //刷新装备库存
+        InventoryManager.Instance.equipmentSlotContainer.RefreshSlotUI();
+
         //TODO: 提示有鱼咬钩的动作
 
         //随机生成玩家反应的时间
-        float reactionTime = Random.Range(0.5f, 1.5f);
+        float reactionTime = fishing.fishingTimeManager.GetRangeOfReactionTime();
         Debug.Log($"***这次生成的反应随机时间为{reactionTime}");
         //将OnLostFishTimeUp方法注册到计时器委托中
         fishing.timer.OnTimerFinished += fishing.OnLostFishTimeUp;

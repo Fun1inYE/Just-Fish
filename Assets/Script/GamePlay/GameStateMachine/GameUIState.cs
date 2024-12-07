@@ -253,7 +253,6 @@ public class OpeningSalePanel : GameUIState
         //打开卖出界面的时候不能进行钓鱼操作，打开背包操作
         gsm.totalController.ControlManager<InventoryController>("GameState", false, gsm.totalController.inventoryController);
         gsm.totalController.ControlManager<FishandCastController>("GameState", false, gsm.totalController.fishandCastController);
-        gsm.totalController.ControlManager<StoreController>("GameState", false, gsm.totalController.storeController);
     }
 
     public void OnUpdate(GameUIStateMachine gsm)
@@ -289,7 +288,6 @@ public class OpeningSalePanel : GameUIState
         //恢复所有操作
         gsm.totalController.ControlManager<InventoryController>("GameState", true, gsm.totalController.inventoryController);
         gsm.totalController.ControlManager<FishandCastController>("GameState", true, gsm.totalController.fishandCastController);
-        gsm.totalController.ControlManager<StoreController>("GameState", true, gsm.totalController.storeController);
     }
 }
 

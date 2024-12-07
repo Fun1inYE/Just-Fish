@@ -19,9 +19,9 @@ public static class CalculatItemPrice
         //最终的计算结果
         int result = 0;
         //获取到鱼的长度（整数）
-        int length = (int)fishItem.Length;
+        int length = (int)fishItem.length;
         //获取鱼的重量（整数）
-        int weight = (int)fishItem.Weight;
+        int weight = (int)fishItem.weight;
         //暂时定为这个计算公式
         result = (int)(length * length_coefficient + weight * weight_coefficient);
         return result;

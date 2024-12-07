@@ -9,17 +9,17 @@ using UnityEngine;
 public class StoreData
 {
     /// <summary>
-    /// 工具商品价格
+    /// 商店一号位格子下的价格数值
     /// </summary>
-    public int price_tool;
+    public int price_slot0;
     /// <summary>
-    /// 第一个道具价格
+    /// 商店二号位格子下的价格数值
     /// </summary>
-    public int price_prop1;
+    public int price_slot1;
     /// <summary>
-    /// 第二个道具价格
+    /// 商店三号位格子下的价格数值
     /// </summary>
-    public int price_prop2;
+    public int price_slot2;
 
     /// <summary>
     /// 委托事件，提醒观察者该更新价格了
@@ -27,23 +27,23 @@ public class StoreData
     public event Action OnPriceChange;
 
     //提醒UI观察者改更新UI了
-    public void NodifyPrice_Tool(int price)
+    public void NodifyPrice_Slot0(int price)
     {
-        price_tool = price;
+        price_slot0 = price;
         OnPriceChange?.Invoke();
     }
 
     //提醒UI观察者改更新UI了
-    public void NodifyPrice_Prop1(int price)
+    public void NodifyPrice_Slot1(int price)
     {
-        price_prop1 = price;
+        price_slot1 = price;
         OnPriceChange?.Invoke();
     }
 
     //提醒UI观察者改更新UI了
-    public void NodifyPrice_Prop2(int price)
+    public void NodifyPrice_Slot2(int price)
     {
-        price_prop2 = price;
+        price_slot2 = price;
         OnPriceChange?.Invoke();
     }
 }

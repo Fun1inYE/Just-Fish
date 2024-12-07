@@ -35,26 +35,26 @@ public class StoreDataAndUIController : MonoBehaviour
     /// 更改商品一的价格
     /// </summary>
     /// <param name="price"></param>
-    public void ChangePrice_tool(int price)
+    public void ChangePrice_Slot0(int price)
     {
-        storeData.NodifyPrice_Tool(price);
+        storeData.NodifyPrice_Slot0(price);
     }
 
     /// <summary>
     /// 更改商品二的价格
     /// </summary>
     /// <param name="price"></param>
-    public void ChangePrice_prop1(int price)
+    public void ChangePrice_Slot1(int price)
     {
-        storeData.NodifyPrice_Prop1(price);
+        storeData.NodifyPrice_Slot1(price);
     }
 
     /// <summary>
     /// 更改商品三的价格
     /// </summary>
     /// <param name="price"></param>
-    public void ChangePrice_prop2(int price)
+    public void ChangePrice_Slot2(int price)
     {
-        storeData.NodifyPrice_Prop2(price);
+        storeData.NodifyPrice_Slot2(price);
     }
 }

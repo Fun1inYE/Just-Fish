@@ -29,6 +29,10 @@ public class FishingStateMachine : MonoBehaviour
     /// 钓鱼的状态
     /// </summary>
     private FishingStatus fishingStatus;
+    /// <summary>
+    /// 
+    /// </summary>
+    public FishingTimeManager fishingTimeManager;
 
     /// <summary>
     /// 因为MonoBehaviour会管理方法的生命周期，所以不能直接用构造函数
@@ -48,6 +52,7 @@ public class FishingStateMachine : MonoBehaviour
         {
             Debug.LogError("totalMachine是空的，请检查Hierarchy窗口！");
         }
+        fishingTimeManager = gameObject.GetComponent<FishingTimeManager>();
 
         //因为刚启动的时候脚本默认是enable是false
         enabled = false;

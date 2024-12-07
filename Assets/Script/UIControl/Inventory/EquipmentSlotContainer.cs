@@ -199,9 +199,15 @@ public class EquipmentSlotContainer : SlotContainer
         //装备三号位
         if (slots[2].inventory_Database.list[slots[2].Index] is BaitItem baitItem)
         {
-            if(bait = null)
+            if(bait == null)
             {
                 lastBaitItem = baitItem;
+
+                string name = baitItem.type.name;
+                //从对象池中拿出对应的GameObject
+                bait = PoolManager.Instance.GetGameObjectFromPool(name);
+                //将鱼饵拿到玩家obj的对应点位上
+                SetGameObjectToParent.SetParentFromFirstLayerParent("Player", "BaitPoint", bait);
                 totalController.fishandCastController.EquipmentBait();
             }
             if (bait != null)
@@ -209,15 +215,27 @@ public class EquipmentSlotContainer : SlotContainer
                 if (lastBaitItem != baitItem)
                 {
                     lastBaitItem = baitItem;
+
+                    PoolManager.Instance.ReturnGameObjectToPool(bait);
+                    SetGameObjectToParent.SetParent("Pool", bait);
+
                     totalController.fishandCastController.UnEquipmentBait();
 
-                    //TODO:还得添加细节
+                    string name = baitItem.type.name;
+                    bait = PoolManager.Instance.GetGameObjectFromPool(name);
+                    SetGameObjectToParent.SetParentFromFirstLayerParent("Player", "BaitPoint", bait);
                     totalController.fishandCastController.EquipmentBait();
                 }
             }
         }
 
-
+        else if (slots[2].inventory_Database.list[slots[2].Index] is ItemData && bait != null)
+        {
+            PoolManager.Instance.ReturnGameObjectToPool(bait);
+            SetGameObjectToParent.SetParent("Pool", bait);
+            bait = null;
+            totalController.fishandCastController.UnEquipmentBait();
+        }
     }
 
     /// <summary>
@@ -232,5 +250,22 @@ public class EquipmentSlotContainer : SlotContainer
         Vector3 playerScale = player.transform.localScale;
         //让需要调整的gameObject进行调整
         obj.transform.localScale = playerScale;
+    }
+
+    /// <summary>
+    /// 判断装备格子是否装备完全
+    /// </summary>
+    /// <returns>是否装备完全</returns>
+    public bool GetEquipmentSlotState()
+    {
+        //将三个装备栏全部检查一遍
+        for(int i = 0; i < slotGameObjects.Length; i++)
+        {
+            if (slots[i].inventory_Database.list[i].type.name == "defaultName")
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

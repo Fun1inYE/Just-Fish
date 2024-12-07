@@ -52,6 +52,9 @@ public class OpenAndCloseInventory : IinventoryCommand
         {
             InventoryManager.Instance.RefreshAllContainer();
         }
+
+        //告诉观察背包，商店的脚本：背包开启或者关闭了
+        TotalController.Instance.UIChangedNotify();
     }
 }
 

@@ -40,7 +40,7 @@ public class FishIndicatorController : MonoBehaviour, IController
     /// <summary>
     /// 引用钓鱼数据管理器
     /// </summary>
-    public FishAndCastDataManager fishAndCastDataManager;
+    public FishingIndicatorDataManager fishAndCastDataManager;
 
     /// <summary>
     /// 创建一个更新钓鱼数据的事件
@@ -70,7 +70,7 @@ public class FishIndicatorController : MonoBehaviour, IController
         processStripSlotScript = ComponentFinder.GetChildComponent<ProcessStripSlot>(gameObject, "ProcessStripSlot");
         breakStripSlotScript = ComponentFinder.GetChildComponent<BreakStripSlot>(gameObject, "BreakStripSlot");
 
-        fishAndCastDataManager = GetComponent<FishAndCastDataManager>();
+        fishAndCastDataManager = GetComponent<FishingIndicatorDataManager>();
 
         //初始化默认enable为false
         enabled = false;

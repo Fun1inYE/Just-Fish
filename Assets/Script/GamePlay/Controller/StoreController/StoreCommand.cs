@@ -72,6 +72,9 @@ public class OpenOrCloseStoreCommand : StoreCommand
     public void Execute()
     {
         storePanel.gameObject.SetActive(isOpen);
+
+        //告诉观察背包，商店的脚本：背包开启或者关闭了
+        TotalController.Instance.UIChangedNotify();
     }
 }
 
@@ -106,5 +109,8 @@ public class OpenOrCloseSaleCommand : StoreCommand
         inventoryPanel.SetActive(isOpen);
         //刷新卖出界面UI
         InventoryManager.Instance.saleSlotContainer.RefreshSlotUI();
+
+        //告诉观察背包，商店的脚本：背包开启或者关闭了
+        TotalController.Instance.UIChangedNotify();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime;
@@ -54,6 +55,8 @@ public class InventoryController : MonoBehaviour, IController
     /// </summary>
     public GameObject proppcakContent;
 
+    public List<IUIObserver> oberverlist;
+
     /// <summary>
     /// 来自于ICommand接口，判断该控制器是否能运行
     /// </summary>
@@ -99,6 +102,7 @@ public class InventoryController : MonoBehaviour, IController
             Debug.LogError("inventoryRectTransform是空的，请检查代码!");
         }
 
+        oberverlist = new List<IUIObserver>();
         commandList = new List<IinventoryCommand>();
     }
 

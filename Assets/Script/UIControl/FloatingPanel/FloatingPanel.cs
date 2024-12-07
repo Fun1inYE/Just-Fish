@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 漂浮信息板类
 /// </summary>
-public class FloatingPanel : MonoBehaviour
+public class FloatingPanel : MonoBehaviour, IUIObserver
 {
     /// <summary>
     /// 获取到漂浮板子的GameObject
@@ -41,6 +41,9 @@ public class FloatingPanel : MonoBehaviour
         {
             Debug.LogError("floatingPanelObj是空的，请假查Hierarchy窗口");
         }
+
+        //向被观察者注册
+        TotalController.Instance.AddOberver(this);
     }
 
     /// <summary>
@@ -68,5 +71,22 @@ public class FloatingPanel : MonoBehaviour
     public Text GetDescriptionUI()
     {
         return descriptionUI;
+    }
+
+    /// <summary>
+    /// 当背包被开启的时候
+    /// </summary>
+    public void OnOpenUI()
+    {
+        
+    }
+
+    /// <summary>
+    /// 当背包，商店被关闭的时候
+    /// </summary>
+    public void OnCloseUI()
+    {
+        //关闭悬浮板
+        gameObject.SetActive(false);
     }
 }

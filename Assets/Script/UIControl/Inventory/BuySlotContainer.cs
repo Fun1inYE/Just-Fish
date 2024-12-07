@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,17 +7,7 @@ using UnityEngine;
 public class BuySlotContainer : SlotContainer
 {
     /// <summary>
-    /// 购买鱼竿所需要的钱的计算系数(默认为150f)
-    /// </summary>
-    public float toolQuality_coefficient = 150f;
-
-    /// <summary>
-    /// 道具质量的计算系数（默认为60f）
-    /// </summary>
-    public float propQuality_coefficient = 60f;
-
-    /// <summary>
-    /// 引用刷新类
+    /// 引用刷新物品类
     /// </summary>
     public RefreshProduct refreshProduct;
 
@@ -27,6 +15,11 @@ public class BuySlotContainer : SlotContainer
     /// 引用总控制器
     /// </summary>
     public TotalController totalController;
+
+    /// <summary>
+    /// 引用经济管理器
+    /// </summary>
+    public EconomyManager economyManager;
 
     /// <summary>
     /// 重写父类中的初始化方法
@@ -37,13 +30,8 @@ public class BuySlotContainer : SlotContainer
         base.InitializedContainer();
         //刷新商品初始化
         refreshProduct = SetGameObjectToParent.FindFromFirstLayer("StoreCanvas").GetComponent<RefreshProduct>();
-        
-    }
-
-    public void Start()
-    {
-        //刷新商品
-        RefreshProduct();
+        //经济管理的初始化
+        economyManager = SetGameObjectToParent.FindFromFirstLayer("EconomyManager").GetComponent<EconomyManager>();
     }
 
     /// <summary>
@@ -53,6 +41,9 @@ public class BuySlotContainer : SlotContainer
     {
         //总控制器初始化
         totalController = SetGameObjectToParent.FindFromFirstLayer("GameRoot").GetComponent<TotalController>();
+
+        //总控制器初始化完比之后才能正常刷新商店
+        RefreshProduct();
     }
 
     /// <summary>
@@ -68,42 +59,107 @@ public class BuySlotContainer : SlotContainer
     /// </summary>
     public void RefreshProduct()
     {
-        //随机生成字典中的一个数字
-        int randomNumber1 = Random.Range(0, ItemManager.Instance.GetDictionary<ToolType>().Count - 1);
-        //使用ElementAt随机访问键值对
-        var element1 = ItemManager.Instance.GetDictionary<ToolType>().ElementAt(randomNumber1);
-        //随机生成一个工具品质数字
-        int randomNumber1_2 = Random.Range(0, 4);
-        //存入Inventory
-        InventoryManager.Instance.buyManager.AddItemInListFromIndex(new ToolItem(element1.Key, (ToolQuality)randomNumber1_2), 0);
-        //改变商品价格UI文字
-        totalController.storeDataAndUIController.ChangePrice_tool(CalculatItemPrice.CulationTool(new ToolItem(element1.Key, (ToolQuality)randomNumber1_2), toolQuality_coefficient));
-
-        //随机生成字典中的一个数字
-        int randomNumber2 = Random.Range(0, ItemManager.Instance.GetDictionary<PropType>().Count - 1);
-        //使用ElementAt随机访问键值对
-        var element2 = ItemManager.Instance.GetDictionary<PropType>().ElementAt(randomNumber2);
-        //随机生成一个工道具品质数字
-        int randomNumber2_2 = Random.Range(0, 4);
-        //存入Inventory
-        InventoryManager.Instance.buyManager.AddItemInListFromIndex(new PropItem(element2.Key, (PropQuality)randomNumber2_2), 1);
-        //改变商店商品价格UI文字
-        totalController.storeDataAndUIController.ChangePrice_prop1(CalculatItemPrice.CulationProp(new PropItem(element2.Key, (PropQuality)randomNumber2_2), toolQuality_coefficient));
-
-        //随机生成字典中的一个数字
-        int randomNumber3 = Random.Range(0, ItemManager.Instance.GetDictionary<PropType>().Count - 1);
-        //使用ElementAt随机访问键值对
-        var element3 = ItemManager.Instance.GetDictionary<PropType>().ElementAt(randomNumber3);
-        //随机生成一个道具品质数字
-        int randomNumber3_2 = Random.Range(0, 4);
-        //存入Inventory
-        InventoryManager.Instance.buyManager.AddItemInListFromIndex(new PropItem(element3.Key, (PropQuality)randomNumber3_2), 2);
-        //改变商店商品价格UI文字
-        totalController.storeDataAndUIController.ChangePrice_prop2(CalculatItemPrice.CulationProp(new PropItem(element3.Key, (PropQuality)randomNumber3_2), toolQuality_coefficient));
+        RefreshStoreSlot_0();
+        RefreshStoreSlot_1();
+        RefreshStoreSlot_2();
 
         //刷新UI
         RefreshSlotUI();
         //再次启动计时
         refreshProduct.timer.StartTimer(refreshProduct.refreshProductTime);
+    }
+
+    /// <summary>
+    /// 刷新商店的一号位
+    /// </summary>
+    public void RefreshStoreSlot_0()
+    {
+        ItemData item = GenerateAndTransferStoreSlotFromIndex(0);
+        totalController.storeDataAndUIController.ChangePrice_Slot0(economyManager.ReturnBuyWithCoefficient(item));
+    }
+
+    /// <summary>
+    /// 刷新商店的二号位
+    /// </summary>
+    /// <param name="type"></param>
+    public void RefreshStoreSlot_1()
+    {
+        ItemData item = GenerateAndTransferStoreSlotFromIndex(1);
+        totalController.storeDataAndUIController.ChangePrice_Slot1(economyManager.ReturnBuyWithCoefficient(item));
+    }
+
+    /// <summary>
+    /// 刷新商店的三号位
+    /// </summary>
+    /// <param name="type"></param>
+    public void RefreshStoreSlot_2()
+    {
+        ItemData item = GenerateAndTransferStoreSlotFromIndex(2);
+        totalController.storeDataAndUIController.ChangePrice_Slot2(economyManager.ReturnBuyWithCoefficient(item));
+    }
+
+    /// <summary>
+    /// 生成物品并且将其放到对应index序号的商店格子中,并且返回对应的ItemData
+    /// </summary>
+    /// <param name="index"></param>
+    private ItemData GenerateAndTransferStoreSlotFromIndex(int index)
+    {
+        //先随机获取到一个物品类型，等待被包装成物品
+        BaseType baseType = ItemManager.Instance.GetRandomItemFromRandomDictionary();
+
+        //如果baseType类型为FishType
+        if (baseType is FishType fishType)
+        {
+            double weight = Random.Range(1f, 30f);
+            double length = Random.Range(1f, 30f);
+            //将type包装成item
+            FishItem fishItem = new FishItem(fishType, length, weight);
+            //生成并且存入商店格子中
+            InventoryManager.Instance.buyManager.AddItemInListFromIndex(fishItem, index);
+
+            return fishItem;
+        }
+
+        //如果baseType类型为ToolType
+        if (baseType is ToolType toolType)
+        {
+            //随机获取到鱼竿的质量
+            int randomNumber = Random.Range(0, System.Enum.GetValues(typeof(ToolQuality)).Length);
+
+            ToolItem toolItem = new ToolItem(toolType, (ToolQuality)randomNumber);
+
+            InventoryManager.Instance.buyManager.AddItemInListFromIndex(toolItem, index);
+
+            return toolItem;
+        }
+
+        //如果baseType类型为PropType
+        if (baseType is PropType propType)
+        {
+            //随机获取到鱼鳔的质量
+            int randomNumber = Random.Range(0, System.Enum.GetValues(typeof(PropQuality)).Length);
+
+            PropItem propItem = new PropItem(propType, (PropQuality)randomNumber);
+
+            InventoryManager.Instance.buyManager.AddItemInListFromIndex(propItem, index);
+
+            return propItem;
+        }
+
+        //如果baseType类型为BaitType
+        if (baseType is BaitType baitType)
+        {
+            //随机生成鱼饵的数量 20 ~ 50个
+            int randomNumber = Random.Range(20, 51);
+
+            BaitItem baitItem = new BaitItem(baitType, 99, randomNumber);
+
+            InventoryManager.Instance.buyManager.AddItemInListFromIndex(baitItem, index);
+
+            return baitItem;
+        }
+
+        Debug.LogError($"没有检测到对应的{baseType.GetType()}，请检查代码");
+        return null;
     }
 }

@@ -113,6 +113,15 @@ public class StoreController : MonoBehaviour, IController
             optionPanelisOpening = !optionPanelisOpening;
             commandList.Add(new OpenOrCloseOptionCommand(optionPanel, optionPanelisOpening));
         }
+        //如果检测到选项面板启动了，则可以通过esc关闭它
+        if(optionPanelisOpening)
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                optionPanelisOpening = false;
+                commandList.Add(new OpenOrCloseOptionCommand(optionPanel, optionPanelisOpening));
+            }
+        }
     }
 
     /// <summary>

@@ -69,7 +69,6 @@ public class GameRoot : MonoBehaviour
         }
         foreach (T type in list)
         {
-            Debug.Log(type.obj);
             //从抽象工厂类获取对应类的实例
             T buildType = factory.CreateItem(type.obj);
             //将实例传入ItemManager中的字典
@@ -135,7 +134,7 @@ public class GameRoot : MonoBehaviour
             //然后更新UI
             InventoryManager.Instance.proppackSlotContainer.RefreshSlotUI();
         }
-
+ 
         if(Input.GetKeyDown(KeyCode.Alpha4))
         {
             //随机生成字典中的一个数字
@@ -144,7 +143,7 @@ public class GameRoot : MonoBehaviour
             var element = ItemManager.Instance.GetDictionary<BaitType>().ElementAt(randomNumber);
 
             //存入Inventory
-            InventoryManager.Instance.proppackManager.AddItemInList(new BaitItem(element.Key, 99, 1), 1);
+            InventoryManager.Instance.proppackManager.AddItemInList(new BaitItem(element.Key, 99, 1));
             //然后更新UI
             InventoryManager.Instance.proppackSlotContainer.RefreshSlotUI();
         }

@@ -21,7 +21,7 @@ public class InventoryData
     /// <summary>
     /// 向列表中添加物品(物品数量默认为1)
     /// </summary>
-    public void AddItemInList(ItemData item, int amount = 0)
+    public void AddItemInList(ItemData item)
     {
         //itemData.TypedefaultType为的Slot是否被找到的标识（默认为false）
         bool hasFoundDefaultTypeSlot = false;
@@ -29,24 +29,39 @@ public class InventoryData
         //先判断item是否可以堆叠
         if (item.canStack)
         {
+            Debug.Log("canStack");
             //遍历背包中的物品
             foreach(ItemData data in list)
             {
                 //如果在list中找到了与传进来的item的名字一样的物品
                 if (item.type.name == data.type.name)
                 {
-                    //在判断此物品的堆叠数是否等于此物品的最大堆叠数
-                    if(data.amount == data.maxAmount)
+                    Debug.Log("item.type.name == data.type.name");
+
+                    //给此物品格子添加amount个重复物品
+                    data.amount += item.amount;
+
+                    //在此判断叠加后的物品是否大于该物品最大堆叠数，如果大于的话就要做处理
+                    if (data.amount > data.maxAmount)
                     {
-                        Debug.Log("格子已经为此物品的最大堆叠数了");
+                        //将多出来的数量返还给item
+                        item.amount = data.amount - data.maxAmount;
+                        //将data.amount置为data的最大堆叠数
+                        data.amount = data.maxAmount;
+                        Debug.Log("物品数量大于最大堆叠数了");
+                        //代表还有剩余的物品没有放进格子中
+                        hasFoundDefaultTypeSlot = false;
                         continue;
                     }
-                    //给此物品格子添加amount个重复物品
-                    data.amount += amount;
+                    else 
+                    {
+
+                        Debug.Log("该格子中的物品小于当前物品的最大堆叠数");
+                        hasFoundDefaultTypeSlot = true;
+                    }
+
                     //更新Identifier
                     data.itemIdentifier.amountIditenfier = data.amount;
-                    hasFoundDefaultTypeSlot = true;
-                    break;
                 }
             }
         }
@@ -109,6 +124,11 @@ public class InventoryData
                 list[index].amount -= 1;
                 //更新Identifier
                 list[index].itemIdentifier.amountIditenfier = list[index].amount;
+                //当即检测这个物品是否为0，如果是0的话就将这个格子清空（防止僵尸物品出现）
+                if (list[index].amount == 0)
+                {
+                    list[index] = new ItemData(new BaseType());
+                }
             }
         }
     }
@@ -133,11 +153,33 @@ public class InventoryData
                 else
                 {
                     list[i].amount -= 1;
+                    Debug.Log(list[i].amount);
                     //更新Identifier
                     list[i].itemIdentifier.amountIditenfier = list[i].amount;
+                    //当即检测这个物品是否为0，如果是0的话就将这个格子清空（防止僵尸物品出现）
+                    if(list[i].amount == 0)
+                    {
+                        list[i] = new ItemData(new BaseType());
+                    }
                     break;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// 通过序号寻找物品
+    /// </summary>
+    public ItemData GetItemFromIndex(int index)
+    {
+        if (index >= 0 || index <= list.Count - 1)
+        {
+            return list[index];
+        }
+        else
+        {
+            Debug.LogError($"本list序号位为0到{list.Count - 1},传入的序号{index}有问题，请检查代码");
+            return null;
         }
     }
 

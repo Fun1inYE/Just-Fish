@@ -161,3 +161,4 @@ MonoBehaviour:
   power: 50
   toughness: 40
   speed: 50
+  baseEco: 100

@@ -1,7 +1,9 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -48,6 +50,8 @@ public class TotalController : MonoBehaviour
     /// </summary>
     public BackGroundFollowController backGroundFollowController { get; set; }
 
+    public List<IUIObserver> UIObserversList;
+
     /// <summary>
     /// 不同控制器对应的操控状态机的名字
     /// </summary>
@@ -84,6 +88,9 @@ public class TotalController : MonoBehaviour
         {
             Debug.LogError("storeDataAndUIController是空的，请检查代码！");
         }
+
+        //初始化UI观察者的列表
+        UIObserversList = new List<IUIObserver>();
 
         //初始化状态机名字列表
         stateMachineNameWithControllerDic = new Dictionary<string, string>();
@@ -323,5 +330,38 @@ public class TotalController : MonoBehaviour
             return;
         }
 
+    }
+
+    /// <summary>
+    /// 添加一个观察者
+    /// </summary>
+    /// <param name="observer"></param>
+    public void AddOberver(IUIObserver observer)
+    {
+        UIObserversList.Add(observer);
+    }
+
+    /// <summary>
+    /// 移除一个观察者
+    /// </summary>
+    /// <param name="observer"></param>
+    public void RemoveObserver(IUIObserver observer)
+    {
+        UIObserversList.Remove(observer);
+    }
+
+    /// <summary>
+    /// 通知观察者
+    /// </summary>
+    public void UIChangedNotify()
+    {
+        //先判断背包是打开状态还是关闭状态
+        if (!inventoryController.isOpen || !storeController.storePanelisOpening || !storeController.salePanelisOpening)
+        {
+            foreach (var observer in UIObserversList)
+            {
+                observer.OnCloseUI();
+            }
+        }
     }
 }

@@ -62,8 +62,8 @@ public class StoreUI : MonoBehaviour
     /// </summary>
     public void UpdataUI()
     {
-        price_tool.text = storeData.price_tool.ToString();
-        price_prop1.text = storeData.price_prop1.ToString();
-        price_prop2.text = storeData.price_prop2.ToString();
+        price_tool.text = storeData.price_slot0.ToString();
+        price_prop1.text = storeData.price_slot1.ToString();
+        price_prop2.text = storeData.price_slot2.ToString();
     }
 }

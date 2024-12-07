@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4761973167585567470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5635749076404232175}
+  m_Layer: 7
+  m_Name: BaitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5635749076404232175
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4761973167585567470}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8533526235394972823}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8533526235297553983
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,7 +91,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8533526235394972823}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8533526235394972819
 GameObject:
@@ -82,6 +113,7 @@ GameObject:
   - component: {fileID: 323080246121940093}
   - component: {fileID: 7541862451340706302}
   - component: {fileID: 4522680084968908419}
+  - component: {fileID: 4855971114028307889}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -104,6 +136,7 @@ Transform:
   - {fileID: 8533526235297553952}
   - {fileID: 8533526236770974668}
   - {fileID: 8533526235632823707}
+  - {fileID: 5635749076404232175}
   - {fileID: 8533526235507943515}
   - {fileID: 8533526237263567734}
   - {fileID: 8533526235302237646}
@@ -286,6 +319,7 @@ MonoBehaviour:
   drawLine: {fileID: 0}
   fishRodManager: {fileID: 0}
   driftManager: {fileID: 0}
+  baitManager: {fileID: 0}
 --- !u!95 &8533526235394972830
 Animator:
   serializedVersion: 5
@@ -347,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c612b258ec92314aa991791cc71e610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalController: {fileID: 0}
+  fishAndCastDataManager: {fileID: 0}
   fishRodData: {fileID: 0}
 --- !u!114 &4522680084968908419
 MonoBehaviour:
@@ -361,8 +395,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 831b7bd9d6ef1ab4aab5c3cfbe8f3fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalController: {fileID: 0}
+  fishingIndicatorDataManager: {fileID: 0}
   driftData: {fileID: 0}
+--- !u!114 &4855971114028307889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8533526235394972819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a3e24d9b167eab4d8ecf396165dc22f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fishingTimeManager: {fileID: 0}
+  baitData: {fileID: 0}
 --- !u!1 &8533526235507943514
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,7 +440,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8533526235394972823}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8533526235632823706
 GameObject:
@@ -601,5 +649,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8533526235394972823}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

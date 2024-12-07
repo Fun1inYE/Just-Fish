@@ -67,9 +67,13 @@ public class FishandCastController : MonoBehaviour, IController
     /// </summary>
     public FishRodManager fishRodManager;
     /// <summary>
-    /// 鱼鳔管理器
+    /// 鱼鳔数据管理器
     /// </summary>
     public DriftManager driftManager;
+    /// <summary>
+    /// 鱼饵数据啊管理器
+    /// </summary>
+    public BaitManager baitManager;
 
     /// <summary>
     /// 来自于ICommand接口，判断该控制器是否能运行
@@ -94,6 +98,7 @@ public class FishandCastController : MonoBehaviour, IController
         drawLine = ComponentFinder.GetChildComponent<DrawLine>(gameObject, "FishRodPoint");
         fishRodManager = gameObject.GetComponent<FishRodManager>();
         driftManager = gameObject.GetComponent<DriftManager>();
+        baitManager = gameObject.GetComponent<BaitManager>();
 
         // 初始化命令列表
         commandList = new List<IFishCommand>();
@@ -112,7 +117,7 @@ public class FishandCastController : MonoBehaviour, IController
             //初始化鱼竿位置
             fishRodScript.transform.localPosition = Vector3.zero;
             //刷新钓竿的基础数值
-            fishRodManager.UpdateFishRodData(fishRodScript.gameObject);
+            fishRodManager.UpdateFishRodData(InventoryManager.Instance.equipmentManager.GetItemFromIndex(0));
             //如果二者都装备好了就会调用这个方法
             PutDriftToWire();
             isInitFishRod = true;
@@ -146,7 +151,7 @@ public class FishandCastController : MonoBehaviour, IController
             //初始化鱼漂位置
             driftScript.transform.localPosition = Vector3.zero;
             //刷新鱼鳔的基础数据
-            driftManager.UpdateDriftData(driftScript.gameObject);
+            driftManager.UpdateDriftData(InventoryManager.Instance.equipmentManager.GetItemFromIndex(1));
             //如果二者都装备好了就会调用这个方法,将鱼鳔移动到竿头
             PutDriftToWire();
             isInitDrift = true;
@@ -170,6 +175,9 @@ public class FishandCastController : MonoBehaviour, IController
         //防止重复装备
         if(isInitBait == false)
         {
+            baitScript = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("Player").transform, "BaitPoint").GetChild(0).GetComponent<Bait>();
+            //刷新诱饵基础数据
+            baitManager.UpdateDriftData(InventoryManager.Instance.equipmentManager.GetItemFromIndex(2));
             isInitDrift = true;
         }
     }
