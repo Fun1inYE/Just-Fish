@@ -8,6 +8,10 @@ using UnityEngine;
 public abstract class ISlotSwapStrategy
 {
     /// <summary>
+    /// 标识是否有可堆叠物品在堆叠相同物品(默认false)
+    /// </summary>
+    public bool canStackSwap = false;
+    /// <summary>
     /// 判断是否可以交换
     /// </summary>
     /// <param name="originalSlot"></param>
@@ -19,7 +23,34 @@ public abstract class ISlotSwapStrategy
     /// </summary>
     /// <param name="oriinalSlot"></param>
     /// <param name="targetSlot"></param>
-    public abstract void Swap(Slot orignalSlot, Slot targetSlot);
+    public virtual void Swap(Slot originalSlot, Slot targetSlot)
+    {
+        //先判断在之前判断的拖动的物品是否可以堆叠并且目标和操作的物品名字一样
+        if (canStackSwap && originalSlot.GetSlotItem().type.name == targetSlot.GetSlotItem().type.name)
+        {
+            //如果移动完叠加到物品上限的话
+            if (originalSlot.GetSlotItem().amount + targetSlot.GetSlotItem().amount > targetSlot.GetSlotItem().maxAmount)
+            {
+                //计算过程
+                originalSlot.GetSlotItem().amount = originalSlot.GetSlotItem().amount - targetSlot.GetSlotItem().maxAmount + targetSlot.GetSlotItem().amount;
+                targetSlot.GetSlotItem().amount = targetSlot.GetSlotItem().maxAmount;
+            }
+            //如果移动完叠加没有到达物体上限的话
+            else if (originalSlot.GetSlotItem().amount + targetSlot.GetSlotItem().amount <= targetSlot.GetSlotItem().maxAmount)
+            {
+                //计算过程
+                targetSlot.GetSlotItem().amount = originalSlot.GetSlotItem().amount + targetSlot.GetSlotItem().amount;
+                originalSlot.GetSlotItem().amount = 0;
+            }
+        }
+        else
+        {
+            // 执行普通格子交换的逻辑
+            ItemData tempData = originalSlot.inventory_Database.list[originalSlot.Index];
+            originalSlot.inventory_Database.list[originalSlot.Index] = targetSlot.inventory_Database.list[targetSlot.Index];
+            targetSlot.inventory_Database.list[targetSlot.Index] = tempData;
+        }
+    }
 }
 
 /// <summary>
@@ -33,6 +64,13 @@ public class NormalSlotSwapStrategy : ISlotSwapStrategy
         if (!originalSlot.inventory_Database.GetExchangeState() || !targetSlot.inventory_Database.GetExchangeState())
         {
             return false;
+        }
+
+        //再判断拖动的格子中的物品是否可以堆叠
+        if (originalSlot.GetSlotItem().canStack)
+        {
+            //移动的物品是可以堆叠的
+            canStackSwap = true;
         }
 
         //从普通格子移动到装备格子
@@ -75,6 +113,8 @@ public class NormalSlotSwapStrategy : ISlotSwapStrategy
         }
         else
         {
+            
+            
             //普通交换格子的方法
             return originalSlot.slotType == targetSlot.slotType;
         }
@@ -82,10 +122,7 @@ public class NormalSlotSwapStrategy : ISlotSwapStrategy
 
     public override void Swap(Slot originalSlot, Slot targetSlot)
     {
-        // 执行普通格子交换的逻辑
-        ItemData tempData = originalSlot.inventory_Database.list[originalSlot.Index];
-        originalSlot.inventory_Database.list[originalSlot.Index] = targetSlot.inventory_Database.list[targetSlot.Index];
-        targetSlot.inventory_Database.list[targetSlot.Index] = tempData;
+        base.Swap(originalSlot, targetSlot);
     }
 }
 
@@ -100,6 +137,13 @@ public class EquipmentSlotSwapStrategy : ISlotSwapStrategy
         if (!originalSlot.inventory_Database.GetExchangeState() || !targetSlot.inventory_Database.GetExchangeState())
         {
             return false;
+        }
+
+        //再判断拖动的格子中的物品是否可以堆叠
+        if (originalSlot.GetSlotItem().canStack)
+        {
+            //移动的物品是可以堆叠的
+            canStackSwap = true;
         }
 
         //当目标Slot不是装备类型的，而操作的Slot是装备格子
@@ -124,10 +168,7 @@ public class EquipmentSlotSwapStrategy : ISlotSwapStrategy
 
     public override void Swap(Slot originalSlot, Slot targetSlot)
     {
-        // 执行装备格子的交换逻辑
-        ItemData tempData = originalSlot.inventory_Database.list[originalSlot.Index];
-        originalSlot.inventory_Database.list[originalSlot.Index] = targetSlot.inventory_Database.list[targetSlot.Index];
-        targetSlot.inventory_Database.list[targetSlot.Index] = tempData;
+        base.Swap(originalSlot, targetSlot);
     }
 }
 
@@ -142,6 +183,14 @@ public class SaleSlotSwapStrategy : ISlotSwapStrategy
         if (!originalSlot.inventory_Database.GetExchangeState() || !targetSlot.inventory_Database.GetExchangeState())
         {
             return false;
+        }
+
+        //再判断拖动的格子中的物品是否可以堆叠
+        if (originalSlot.GetSlotItem().canStack)
+        {
+            Debug.Log("originalSlot.GetSlotItem().canStack");
+            //移动的物品是可以堆叠的
+            canStackSwap = true;
         }
 
         //当操作的slot是卖出格子，而目标不是卖出格子
@@ -159,9 +208,6 @@ public class SaleSlotSwapStrategy : ISlotSwapStrategy
 
     public override void Swap(Slot originalSlot, Slot targetSlot)
     {
-        // 执行卖出格子的交换逻辑
-        ItemData tempData = originalSlot.inventory_Database.list[originalSlot.Index];
-        originalSlot.inventory_Database.list[originalSlot.Index] = targetSlot.inventory_Database.list[targetSlot.Index];
-        targetSlot.inventory_Database.list[targetSlot.Index] = tempData;
+        base.Swap(originalSlot, targetSlot);
     }
 }

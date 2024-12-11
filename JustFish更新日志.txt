@@ -10,5 +10,16 @@ Functional Testing V0.0.3
 修复了超过对象池所定的范围之后不正常显示GameObject的问题
 给存档名字做了些限制
 
+Functional Testing V0.0.4
 2024/11/29
 修复了玩家选中存档后退出继续游戏UI再进入还显示选中UI的bug
+
+2024/12/5
+修复了悬浮面板不会随slot容器UI开关
+修复了InventoryData中的DeleteformIndex系列的bug，防止僵尸物品出现。
+
+2024/12/7
+给商店进行了更新，现能随机售卖各种物品
+玩家可以装备鱼鳔了
+所有物品均已套上对应数值以影响钓鱼体验
+

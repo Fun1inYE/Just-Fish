@@ -14,11 +14,6 @@ public class FishRodManager : MonoBehaviour
     public FishingIndicatorDataManager fishAndCastDataManager;
 
     /// <summary>
-    /// 玩家当前装备的钓竿数据
-    /// </summary>
-    public FishRodData fishRodData;
-
-    /// <summary>
     /// 脚本初始化
     /// </summary>
     public void Awake()

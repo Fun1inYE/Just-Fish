@@ -36,8 +36,6 @@ public class InventoryData
                 //如果在list中找到了与传进来的item的名字一样的物品
                 if (item.type.name == data.type.name)
                 {
-                    Debug.Log("item.type.name == data.type.name");
-
                     //给此物品格子添加amount个重复物品
                     data.amount += item.amount;
 
@@ -48,20 +46,19 @@ public class InventoryData
                         item.amount = data.amount - data.maxAmount;
                         //将data.amount置为data的最大堆叠数
                         data.amount = data.maxAmount;
-                        Debug.Log("物品数量大于最大堆叠数了");
                         //代表还有剩余的物品没有放进格子中
                         hasFoundDefaultTypeSlot = false;
+                        //更新Identifier
+                        data.itemIdentifier.amountIditenfier = data.amount;
                         continue;
                     }
                     else 
                     {
-
-                        Debug.Log("该格子中的物品小于当前物品的最大堆叠数");
                         hasFoundDefaultTypeSlot = true;
+                        //更新Identifier
+                        data.itemIdentifier.amountIditenfier = data.amount;
+                        break;
                     }
-
-                    //更新Identifier
-                    data.itemIdentifier.amountIditenfier = data.amount;
                 }
             }
         }

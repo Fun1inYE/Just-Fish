@@ -178,7 +178,7 @@ public class FishandCastController : MonoBehaviour, IController
             baitScript = SetGameObjectToParent.FindChildBreadthFirst(SetGameObjectToParent.FindFromFirstLayer("Player").transform, "BaitPoint").GetChild(0).GetComponent<Bait>();
             //刷新诱饵基础数据
             baitManager.UpdateDriftData(InventoryManager.Instance.equipmentManager.GetItemFromIndex(2));
-            isInitDrift = true;
+            isInitBait = true;
         }
     }
 

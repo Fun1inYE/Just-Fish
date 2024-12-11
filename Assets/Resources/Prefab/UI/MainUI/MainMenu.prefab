@@ -80,7 +80,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Functional Testing V0.0.3
+  m_Text: Functional Testing V0.0.4
 --- !u!114 &6651270053852197998
 MonoBehaviour:
   m_ObjectHideFlags: 0

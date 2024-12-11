@@ -46,7 +46,7 @@ public class MovePlayerController : MonoBehaviour, IController
     /// <summary>
     /// 检测射线的长度(默认0.1)
     /// </summary>
-    public float radius = 0.01f;
+    public float radius = 0.1f;
     /// <summary>
     /// 储存指令的列表
     /// </summary>

@@ -74,7 +74,9 @@ public class BuySlotContainer : SlotContainer
     /// </summary>
     public void RefreshStoreSlot_0()
     {
+        //接收被包装好的item传入经济系统管理器中计算价值
         ItemData item = GenerateAndTransferStoreSlotFromIndex(0);
+        //更改所需价钱的UI
         totalController.storeDataAndUIController.ChangePrice_Slot0(economyManager.ReturnBuyWithCoefficient(item));
     }
 
@@ -101,7 +103,7 @@ public class BuySlotContainer : SlotContainer
     /// <summary>
     /// 生成物品并且将其放到对应index序号的商店格子中,并且返回对应的ItemData
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">商店格子的序号</param>
     private ItemData GenerateAndTransferStoreSlotFromIndex(int index)
     {
         //先随机获取到一个物品类型，等待被包装成物品

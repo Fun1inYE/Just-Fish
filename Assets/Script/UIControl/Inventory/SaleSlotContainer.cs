@@ -9,35 +9,14 @@ using UnityEngine;
 public class SaleSlotContainer : SlotContainer
 {
     /// <summary>
-    /// 长度计算系数（默认为1f）
-    /// </summary>
-    public float length_coefficient = 1f;
-    /// <summary>
-    /// 重量计算系数（默认为3f）
-    /// </summary>
-    public float weight_coefficient = 3f;
-
-    /// <summary>
-    /// 工具质量的计算系数（默认为100f）
-    /// </summary>
-    public float toolQuality_coefficient = 100f;
-    /// <summary>
-    /// 道具质量的计算系数（默认为100f）
-    /// </summary>
-    public float propQuality_coefficient = 50f;
-    /// <summary>
-    /// 鱼竿计算系数
-    /// </summary>
-    public float tool_coefficient = 10f;
-    /// <summary>
-    /// 鱼鳔的计算系数
-    /// </summary>
-    public float prop_coefficient = 5f;
-
-    /// <summary>
     /// 引用总控制器
     /// </summary>
     public TotalController totalController;
+
+    /// <summary>
+    /// 引用经济管理器
+    /// </summary>
+    public EconomyManager economyManager;
 
     /// <summary>
     /// 重写SlotContainer中的InitializedContainer()方法，为当前类多初始化总控制器
@@ -45,6 +24,9 @@ public class SaleSlotContainer : SlotContainer
     public override void InitializedContainer()
     {
         base.InitializedContainer();
+
+        //经济管理的初始化
+        economyManager = SetGameObjectToParent.FindFromFirstLayer("EconomyManager").GetComponent<EconomyManager>();
     }
 
     /// <summary>
@@ -89,35 +71,37 @@ public class SaleSlotContainer : SlotContainer
             {
                 //转换格子类型
                 slot.interiorSlotType = SlotType.FishItem;
-                //计算价钱
-                int result = CalculatItemPrice.CulationFish(fishItem, length_coefficient, weight_coefficient);
-                //调用总控制器中的更新PlayerUI的方法,更改预显示的金币数量
-                totalController.playerDataAndUIController.ChangeSallingCoin(result);
+                //计算卖出价钱，调用总控制器中的更新PlayerUI的方法,更改预显示的金币数量
+                totalController.playerDataAndUIController.ChangeSallingCoin(economyManager.ReturnSaleWithCoefficient(fishItem));
             }
             //计算鱼竿的价钱
             else if (slot.inventory_Database.list[index] is ToolItem toolItem)
             {
                 //转换格子类型
                 slot.interiorSlotType = SlotType.ToolItem;
-                //计算价钱
-                int result = CalculatItemPrice.CulationTool(toolItem, toolQuality_coefficient);
-                //调用总控制器中的更新PlayerUI的方法,更改预显示的金币数量
-                totalController.playerDataAndUIController.ChangeSallingCoin(result);
+
+                totalController.playerDataAndUIController.ChangeSallingCoin(economyManager.ReturnSaleWithCoefficient(toolItem));
             }
             //计算鱼鳔的价钱
             else if (slot.inventory_Database.list[index] is PropItem propItem)
             {
                 //转换格子类型
                 slot.interiorSlotType = SlotType.PropItem;
-                //计算价钱
-                int result = CalculatItemPrice.CulationProp(propItem, propQuality_coefficient);
                 //调用总控制器中的更新PlayerUI的方法,更改预显示的金币数量
-                totalController.playerDataAndUIController.ChangeSallingCoin(result);
+                totalController.playerDataAndUIController.ChangeSallingCoin(economyManager.ReturnSaleWithCoefficient(propItem));
+            }
+            //计算鱼饵的价钱
+            else if (slot.inventory_Database.list[index] is BaitItem baitItem)
+            {
+                //转换格子类型
+                slot.interiorSlotType = SlotType.PropItem;
+                //调用总控制器中的更新PlayerUI的方法,更改预显示的金币数量
+                totalController.playerDataAndUIController.ChangeSallingCoin(economyManager.ReturnSaleWithCoefficient(baitItem));
             }
             //如果什么都不是的话
             else
             {
-                Debug.Log("执行到这句话了");
+                Debug.LogError("卖出格子随机到了一个未知物品变量");
             }
         }
         

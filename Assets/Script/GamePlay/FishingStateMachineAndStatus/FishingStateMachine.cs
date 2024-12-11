@@ -88,6 +88,11 @@ public class FishingStateMachine : MonoBehaviour
     /// </summary>
     public void InitializeDisPlayFish()
     {
+        Debug.Log(totalController);
+        Debug.Log(totalController.fishandCastController);
+        Debug.Log(totalController.fishandCastController.driftScript);
+
+        Debug.Log(totalController.fishandCastController.driftScript.gameObject);
         displayFish = new DisplayFish(totalController.fishandCastController.driftScript.gameObject);
     }
 
